@@ -1,9 +1,11 @@
 import express from "express";
 import { calcularReservaAirbnb } from "./calculo";
 import path from "path";
+import { initTelemetry, recordUsage, getTodayUsage } from "./telemetry";
 
 const app = express();
 const port = 3000;
+initTelemetry();
 
 // Para recibir JSON en POST
 app.use(express.json());
@@ -19,6 +21,22 @@ app.get("/", (_req, res) => {
 // Endpoint principal: POST /calcular
 app.post("/calcular", (req, res) => {
   try {
+    // Freemium limit
+    const usage = getTodayUsage();
+    const DAILY_FREE_LIMIT = 20;
+
+    if (usage.total >= DAILY_FREE_LIMIT) {
+      return res.status(429).json({
+        ok: false,
+        error: "Límite gratuito alcanzado. Intenta mañana o activa una cuenta premium.",
+      });
+    }
+
+    // Registrar uso
+    recordUsage("api");
+
+    // --- tu código actual sigue igual ---
+
     const {
       tarifa_noche,
       noches,
