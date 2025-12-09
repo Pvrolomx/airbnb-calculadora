@@ -1,21 +1,23 @@
 {
   "name": "airbnb-calculadora",
   "version": "1.0.0",
-  "main": "dist/index.js",
+  "description": "Calculadora de estimación de ganancia neta por reservación Airbnb México",
+  "main": "dist/server.js",
   "license": "MIT",
   "scripts": {
     "build": "tsc",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "start": "node dist/server.js"
   },
   "devDependencies": {
-    "@types/express": "^5.0.6",
+    "@types/express": "^4.17.21",
     "@types/jest": "^29.5.12",
     "jest": "^29.7.0",
     "ts-jest": "^29.1.1",
-    "typescript": "..."
+    "typescript": "^5.6.3"
   },
   "dependencies": {
-    "express": "..."
+    "express": "^4.21.1"
   }
 }
