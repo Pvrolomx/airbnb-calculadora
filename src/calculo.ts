@@ -1,14 +1,14 @@
+// src/calculo.ts
+
 /**
- * Calcula una ESTIMACIÓN INFORMATIVA de los resultados económicos
- * de una reserva de Airbnb.
+ * Calcula una estimación informativa de la ganancia neta por reserva de Airbnb.
  *
- * 👉 Importante:
- * - Los resultados son aproximados.
- * - NO consideran todos los posibles factores fiscales, personales o contables.
- * - NO sustituyen la asesoría de un Contador Público Certificado.
- *
- * Esta función se diseñó solo con fines informativos y de planeación operativa.
- * NO constituye asesoría fiscal, contable ni legal.
+ * IMPORTANTE:
+ * - Los resultados son aproximados y se basan únicamente en los datos proporcionados.
+ * - No se consideran deducciones personales, situación fiscal específica
+ *   ni cambios recientes en la legislación.
+ * - Esta función NO constituye asesoría fiscal, contable ni legal.
+ *   Consulte siempre a un Contador Público Certificado para decisiones reales.
  */
 
 export interface CalculoInput {
@@ -31,6 +31,11 @@ export interface CalculoOutput {
   ganancia_neta_reserva: number;
 }
 
+// Utilidad: redondea a 2 decimales
+function round2(num: number): number {
+  return Math.round(num * 100) / 100;
+}
+
 export function calcularReservaAirbnb(input: CalculoInput): CalculoOutput {
   const {
     tarifa_noche,
@@ -42,31 +47,36 @@ export function calcularReservaAirbnb(input: CalculoInput): CalculoOutput {
     gasto_comisiones_otras,
   } = input;
 
-  // --- Validaciones de tipo y rango (hardening) ---
-
-  const numericValues: Record<string, number> = {
+  // 1) Validaciones de tipo y finitud (NaN / Infinity)
+  const numeros = [
     tarifa_noche,
     noches,
     tarifa_limpieza,
     gasto_limpieza_real,
     gasto_consumibles,
     gasto_comisiones_otras,
-  };
+  ];
 
-  for (const [key, value] of Object.entries(numericValues)) {
-    if (typeof value !== "number" || !Number.isFinite(value)) {
-      throw new Error(`El campo "${key}" debe ser un número finito.`);
-    }
+  if (
+    numeros.some(
+      (v) => typeof v !== "number" || !Number.isFinite(v)
+    )
+  ) {
+    throw new Error("Todos los valores numéricos deben ser números finitos válidos.");
+  }
 
-    if (key === "noches") {
-      if (value < 1) {
-        throw new Error("El número de noches debe ser al menos 1.");
-      }
-    } else {
-      if (value < 0) {
-        throw new Error(`El campo "${key}" no puede ser negativo.`);
-      }
-    }
+  // 2) Validaciones de rango básico
+  if (
+    tarifa_noche < 0 ||
+    noches < 1 ||
+    tarifa_limpieza < 0 ||
+    gasto_limpieza_real < 0 ||
+    gasto_consumibles < 0 ||
+    gasto_comisiones_otras < 0
+  ) {
+    throw new Error(
+      "Valores inválidos: todos los montos deben ser >= 0 y noches >= 1."
+    );
   }
 
   const regimenesValidos: CalculoInput["regimen_fiscal"][] = [
@@ -82,45 +92,51 @@ export function calcularReservaAirbnb(input: CalculoInput): CalculoOutput {
     );
   }
 
-  // --- Cálculos principales (lógica original, sin cambios) ---
+  // 3) Cálculos intermedios (según SPEC)
 
+  // 3.1 Ingreso bruto
   const ingreso_bruto_reserva = tarifa_noche * noches + tarifa_limpieza;
-  const comision_airbnb_reserva = ingreso_bruto_reserva * 0.03;
+
+  // 3.2 Comisión Airbnb (3 %)
+  const COMISION_AIRBNB = 0.03;
+  const comision_airbnb_reserva = ingreso_bruto_reserva * COMISION_AIRBNB;
+
+  // 3.3 Ingreso neto desde Airbnb
   const ingreso_neto_airbnb = ingreso_bruto_reserva - comision_airbnb_reserva;
+
+  // 3.4 Gastos operativos de la reserva
   const gastos_reserva =
     gasto_limpieza_real + gasto_consumibles + gasto_comisiones_otras;
 
+  // 3.5 Tasa “estimada” según régimen (valores fijos del SPEC)
   let tasa_impuesto = 0;
   if (regimen_fiscal === "SIN_RFC") tasa_impuesto = 0.25;
   if (regimen_fiscal === "RESICO") tasa_impuesto = 0.025;
   if (regimen_fiscal === "ACTIVIDAD_EMPRESARIAL") tasa_impuesto = 0.3;
 
+  // 3.6 Base para cálculo de impuestos (no puede ser negativa)
   let base_impuestos = ingreso_neto_airbnb - gastos_reserva;
-  if (base_impuestos < 0) base_impuestos = 0;
-
-  // Impuestos: primero calculamos y redondeamos a 2 decimales
-  const impuestos_estimados_sin_redondear = base_impuestos * tasa_impuesto;
-  const impuestos_estimados_reserva = Math.round(
-    impuestos_estimados_sin_redondear * 100
-  ) / 100;
-
-  // La ganancia neta se calcula usando el impuesto YA redondeado
-  const ganancia_neta_reserva =
-    ingreso_neto_airbnb - gastos_reserva - impuestos_estimados_reserva;
-
-  // Utilidad general de redondeo
-  function round2(num: number): number {
-    return Math.round(num * 100) / 100;
+  if (base_impuestos < 0) {
+    base_impuestos = 0;
   }
 
+  // 3.7 Impuestos estimados (se redondean ANTES de usar en ganancia)
+  const impuestos_estimados_reserva_raw = base_impuestos * tasa_impuesto;
+  const impuestos_estimados_reserva = round2(impuestos_estimados_reserva_raw);
+
+  // 3.8 Ganancia neta final usando el impuesto YA redondeado
+  const ganancia_neta_reserva_raw =
+    ingreso_neto_airbnb - gastos_reserva - impuestos_estimados_reserva;
+  const ganancia_neta_reserva = round2(ganancia_neta_reserva_raw);
+
+  // 4) Devolvemos todo redondeado a 2 decimales
   return {
     ingreso_bruto_reserva: round2(ingreso_bruto_reserva),
     comision_airbnb_reserva: round2(comision_airbnb_reserva),
     ingreso_neto_airbnb: round2(ingreso_neto_airbnb),
     gastos_reserva: round2(gastos_reserva),
     base_impuestos: round2(base_impuestos),
-    // aquí ya viene redondeado, pero es idempotente
-    impuestos_estimados_reserva: round2(impuestos_estimados_reserva),
-    ganancia_neta_reserva: round2(ganancia_neta_reserva),
+    impuestos_estimados_reserva,
+    ganancia_neta_reserva,
   };
 }
