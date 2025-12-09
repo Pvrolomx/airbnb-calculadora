@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Calculadora Airbnb – Estimación por reserva</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg: #020617;
+      --bg-card: #020617;
+      --bg-input: #020617;
+      --border: #1e293b;
+      --accent: #22c55e;
+      --accent-hover: #16a34a;
+      --text: #e5e7eb;
+      --muted: #9ca3af;
+      --danger: #f97373;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: radial-gradient(circle at top, #0f172a, #000000);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 24px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 900px;
+      background: rgba(15, 23, 42, 0.98);
+      border-radius: 18px;
+      padding: 24px 24px 32px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+    }
+
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 1.6rem;
+      letter-spacing: 0.03em;
+    }
+
+    .lang-toggle {
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #020617;
+      color: var(--text);
+      padding: 6px 14px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .lang-pill {
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+
+    .lang-active {
+      background: var(--accent);
+      color: #020617;
+    }
+
+    .subtitle {
+      margin: 0 0 12px;
+      font-size: 0.95rem;
+      color: var(--muted);
+    }
+
+    .disclaimer-box {
+      margin-top: 4px;
+      margin-bottom: 20px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: rgba(15, 23, 42, 0.85);
+      border: 1px dashed rgba(148, 163, 184, 0.5);
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px 24px;
+      margin-bottom: 24px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    label {
+      font-size: 0.9rem;
+      color: #cbd5f5;
+    }
+
+    input,
+    select {
+      background: var(--bg-input);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      padding: 9px 12px;
+      color: var(--text);
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease,
+        background 0.15s ease;
+    }
+
+    input:focus,
+    select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.4);
+      background: #020617;
+    }
+
+    input[type="number"]::-webkit-inner-spin-button {
+      opacity: 0.5;
+    }
+
+    .full-width {
+      grid-column: 1 / -1;
+    }
+
+    .button-row {
+      grid-column: 1 / -1;
+      display: flex;
+      justify-content: center;
+      margin-top: 4px;
+    }
+
+    button[type="submit"] {
+      background: var(--accent);
+      border: none;
+      border-radius: 999px;
+      padding: 11px 26px;
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: #022c22;
+      cursor: pointer;
+      transition: background 0.15s ease, transform 0.08s ease,
+        box-shadow 0.1s ease;
+      box-shadow: 0 10px 25px rgba(34, 197, 94, 0.45);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    button[type="submit"]:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 14px 30px rgba(34, 197, 94, 0.6);
+    }
+
+    button[type="submit"]:active {
+      transform: translateY(0);
+      box-shadow: 0 6px 15px rgba(34, 197, 94, 0.5);
+    }
+
+    .results {
+      margin-top: 10px;
+      padding: 18px 18px 20px;
+      border-radius: 14px;
+      background: linear-gradient(
+        135deg,
+        rgba(15, 23, 42, 0.96),
+        rgba(15, 23, 42, 0.98)
+      );
+      border: 1px solid rgba(148, 163, 184, 0.3);
+    }
+
+    .results-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      margin-bottom: 4px;
+      color: var(--muted);
+    }
+
+    .results-row strong {
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    .results-row span.value {
+      color: #e5e7eb;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .results-row.total {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(148, 163, 184, 0.4);
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .results-row.total span.value {
+      color: var(--accent);
+    }
+
+    .error {
+      margin-top: 10px;
+      color: var(--danger);
+      font-size: 0.85rem;
+    }
+
+    .footer-note {
+      margin-top: 12px;
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-align: left;
+      line-height: 1.4;
+    }
+
+    @media (max-width: 720px) {
+      body {
+        padding: 12px;
+      }
+
+      .container {
+        padding: 18px 16px 24px;
+      }
+
+      form {
+        grid-template-columns: 1fr;
+      }
+
+      .button-row {
+        justify-content: stretch;
+      }
+
+      button[type="submit"] {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .header-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header-row">
+      <h1 data-i18n="title">
+        Calculadora Airbnb – Estimación por reserva
+      </h1>
+      <button id="lang-toggle" class="lang-toggle" type="button">
+        <span class="lang-pill lang-active" data-lang-pill="es">ES</span>
+        <span class="lang-pill" data-lang-pill="en">EN</span>
+      </button>
+    </div>
+    <p class="subtitle" data-i18n="subtitle">
+      Ingresa los datos de una reservación para ver una estimación informativa
+      de tu ganancia neta.
+    </p>
+
+    <div class="disclaimer-box" data-i18n="top_disclaimer">
+      Esta herramienta ofrece cálculos aproximados con fines informativos.
+      No constituye asesoría fiscal, contable ni legal. Los resultados son una
+      estimación basada en los datos que ingresas.
+    </div>
+
+    <form id="calc-form">
+      <div class="field">
+        <label for="tarifa_noche" data-i18n="label_tarifa_noche">
+          Tarifa por noche (MXN)
+        </label>
+        <input
+          type="number"
+          id="tarifa_noche"
+          name="tarifa_noche"
+          min="0"
+          step="0.01"
+          value="500"
+        />
+      </div>
+
+      <div class="field">
+        <label for="noches" data-i18n="label_noches">
+          Noches
+        </label>
+        <input
+          type="number"
+          id="noches"
+          name="noches"
+          min="1"
+          step="1"
+          value="3"
+        />
+      </div>
+
+      <div class="field">
+        <label for="tarifa_limpieza" data-i18n="label_tarifa_limpieza">
+          Tarifa de limpieza que cobras (MXN)
+        </label>
+        <input
+          type="number"
+          id="tarifa_limpieza"
+          name="tarifa_limpieza"
+          min="0"
+          step="0.01"
+          value="200"
+        />
+      </div>
+
+      <div class="field">
+        <label for="regimen_fiscal" data-i18n="label_regimen">
+          Régimen / categoría fiscal (simplificada)
+        </label>
+        <select id="regimen_fiscal" name="regimen_fiscal">
+          <option value="SIN_RFC">Sin RFC / extranjero</option>
+          <option value="RESICO" selected>RESICO</option>
+          <option value="ACTIVIDAD_EMPRESARIAL">
+            Actividad empresarial
+          </option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label
+          for="gasto_limpieza_real"
+          data-i18n="label_gasto_limpieza_real"
+        >
+          Gasto real de limpieza (MXN)
+        </label>
+        <input
+          type="number"
+          id="gasto_limpieza_real"
+          name="gasto_limpieza_real"
+          min="0"
+          step="0.01"
+          value="150"
+        />
+      </div>
+
+      <div class="field">
+        <label
+          for="gasto_consumibles"
+          data-i18n="label_gasto_consumibles"
+        >
+          Gasto en consumibles (MXN)
+        </label>
+        <input
+          type="number"
+          id="gasto_consumibles"
+          name="gasto_consumibles"
+          min="0"
+          step="0.01"
+          value="50"
+        />
+      </div>
+
+      <div class="field full-width">
+        <label
+          for="gasto_comisiones_otras"
+          data-i18n="label_gasto_comisiones_otras"
+        >
+          Otras comisiones / gastos (MXN)
+        </label>
+        <input
+          type="number"
+          id="gasto_comisiones_otras"
+          name="gasto_comisiones_otras"
+          min="0"
+          step="0.01"
+          value="0"
+        />
+      </div>
+
+      <div class="button-row">
+        <button type="submit" id="btn-calcular">
+          <span data-i18n="btn_calcular">
+            Calcular ganancia estimada
+          </span>
+        </button>
+      </div>
+    </form>
+
+    <div id="error" class="error" style="display: none"></div>
+
+    <div class="results" id="results" style="display: none">
+      <div class="results-row">
+        <span data-i18n="res_ingreso_bruto">Ingreso bruto por reserva:</span>
+        <span class="value" id="res-ingreso-bruto">$ 0.00</span>
+      </div>
+      <div class="results-row">
+        <span data-i18n="res_comision_airbnb">
+          Comisión Airbnb estimada:
+        </span>
+        <span class="value" id="res-comision-airbnb">$ 0.00</span>
+      </div>
+      <div class="results-row">
+        <span data-i18n="res_ingreso_neto">
+          Ingreso neto desde Airbnb:
+        </span>
+        <span class="value" id="res-ingreso-neto">$ 0.00</span>
+      </div>
+      <div class="results-row">
+        <span data-i18n="res_gastos_reserva">
+          Gastos de la reserva:
+        </span>
+        <span class="value" id="res-gastos">$ 0.00</span>
+      </div>
+      <div class="results-row">
+        <span data-i18n="res_base_impuestos">
+          Base estimada para impuestos:
+        </span>
+        <span class="value" id="res-base-impuestos">$ 0.00</span>
+      </div>
+      <div class="results-row">
+        <span data-i18n="res_impuestos_estimados">
+          Impuestos estimados:
+        </span>
+        <span class="value" id="res-impuestos">$ 0.00</span>
+      </div>
+      <div class="results-row total">
+        <strong data-i18n="res_ganancia_neta">
+          Ganancia neta estimada:
+        </strong>
+        <span class="value" id="res-ganancia">$ 0.00</span>
+      </div>
+    </div>
+
+    <p class="footer-note" data-i18n="bottom_disclaimer">
+      Esta herramienta ofrece cálculos aproximados con fines informativos.
+      No constituye asesoría fiscal, contable ni legal. Para decisiones
+      fiscales reales, consulta siempre con un contador público certificado.
+    </p>
+  </div>
+
+  <script>
+    const translations = {
+      es: {
+        title: "Calculadora Airbnb \u2013 Estimaci\u00f3n por reserva",
+        subtitle:
+          "Ingresa los datos de una reservaci\u00f3n para ver una estimaci\u00f3n informativa de tu ganancia neta.",
+        top_disclaimer:
+          "Esta herramienta ofrece c\u00e1lculos aproximados con fines informativos. No constituye asesor\u00eda fiscal, contable ni legal. Los resultados son una estimaci\u00f3n basada en los datos que ingresas.",
+        label_tarifa_noche: "Tarifa por noche (MXN)",
+        label_noches: "Noches",
+        label_tarifa_limpieza: "Tarifa de limpieza que cobras (MXN)",
+        label_regimen: "R\u00e9gimen / categor\u00eda fiscal (simplificada)",
+        label_gasto_limpieza_real: "Gasto real de limpieza (MXN)",
+        label_gasto_consumibles: "Gasto en consumibles (MXN)",
+        label_gasto_comisiones_otras: "Otras comisiones / gastos (MXN)",
+        btn_calcular: "Calcular ganancia estimada",
+        res_ingreso_bruto: "Ingreso bruto por reserva:",
+        res_comision_airbnb: "Comisi\u00f3n Airbnb estimada:",
+        res_ingreso_neto: "Ingreso neto desde Airbnb:",
+        res_gastos_reserva: "Gastos de la reserva:",
+        res_base_impuestos: "Base estimada para impuestos:",
+        res_impuestos_estimados: "Impuestos estimados:",
+        res_ganancia_neta: "Ganancia neta estimada:",
+        bottom_disclaimer:
+          "Esta herramienta ofrece c\u00e1lculos aproximados con fines informativos. No constituye asesor\u00eda fiscal, contable ni legal. Para decisiones fiscales reales, consulta siempre con un contador p\u00fablico certificado.",
+      },
+      en: {
+        title: "Airbnb Calculator \u2013 Per-reservation estimate",
+        subtitle:
+          "Enter your reservation details to see an informative estimate of your net earnings.",
+        top_disclaimer:
+          "This tool provides approximate calculations for informational purposes only. It does not constitute tax, accounting, or legal advice. Results are estimates based on the data you provide.",
+        label_tarifa_noche: "Nightly rate (MXN)",
+        label_noches: "Nights",
+        label_tarifa_limpieza: "Cleaning fee you charge (MXN)",
+        label_regimen: "Tax category (simplified)",
+        label_gasto_limpieza_real: "Actual cleaning cost (MXN)",
+        label_gasto_consumibles: "Consumables cost (MXN)",
+        label_gasto_comisiones_otras: "Other commissions / costs (MXN)",
+        btn_calcular: "Calculate estimated profit",
+        res_ingreso_bruto: "Gross income per reservation:",
+        res_comision_airbnb: "Estimated Airbnb fee:",
+        res_ingreso_neto: "Net payout from Airbnb:",
+        res_gastos_reserva: "Reservation costs:",
+        res_base_impuestos: "Estimated tax base:",
+        res_impuestos_estimados: "Estimated taxes:",
+        res_ganancia_neta: "Estimated net profit:",
+        bottom_disclaimer:
+          "This tool provides approximate calculations for informational purposes only. It does not constitute tax, accounting, or legal advice. For real tax decisions, always consult a certified professional.",
+      },
+    };
+
+    let currentLang = "es";
+
+    function applyTranslations() {
+      const dict = translations[currentLang];
+      document.documentElement.lang = currentLang;
+
+      document
+        .querySelectorAll("[data-i18n]")
+        .forEach((el) => {
+          const key = el.getAttribute("data-i18n");
+          if (dict[key]) {
+            el.textContent = dict[key];
+          }
+        });
+
+      // Actualizar pills del botón
+      document
+        .querySelectorAll("[data-lang-pill]")
+        .forEach((pill) => {
+          const lang = pill.getAttribute("data-lang-pill");
+          if (lang === currentLang) {
+            pill.classList.add("lang-active");
+          } else {
+            pill.classList.remove("lang-active");
+          }
+        });
+    }
+
+    document
+      .getElementById("lang-toggle")
+      .addEventListener("click", () => {
+        currentLang = currentLang === "es" ? "en" : "es";
+        applyTranslations();
+      });
+
+    applyTranslations();
+
+    async function enviarFormulario(event) {
+      event.preventDefault();
+      const errorEl = document.getElementById("error");
+      const resultsEl = document.getElementById("results");
+      errorEl.style.display = "none";
+
+      const formData = {
+        tarifa_noche: Number(
+          document.getElementById("tarifa_noche").value
+        ),
+        noches: Number(document.getElementById("noches").value),
+        tarifa_limpieza: Number(
+          document.getElementById("tarifa_limpieza").value
+        ),
+        regimen_fiscal:
+          document.getElementById("regimen_fiscal").value,
+        gasto_limpieza_real: Number(
+          document.getElementById("gasto_limpieza_real").value
+        ),
+        gasto_consumibles: Number(
+          document.getElementById("gasto_consumibles").value
+        ),
+        gasto_comisiones_otras: Number(
+          document.getElementById("gasto_comisiones_otras").value
+        ),
+      };
+
+      try {
+        const res = await fetch("/calcular", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok || !data.ok) {
+          throw new Error(
+            data.error ||
+              (currentLang === "es"
+                ? "Ocurri\u00f3 un error al calcular la reserva."
+                : "An error occurred while calculating the reservation.")
+          );
+        }
+
+        const r = data.resultado;
+
+        const fmt = (num) =>
+          "$ " + Number(num).toFixed(2);
+
+        document.getElementById(
+          "res-ingreso-bruto"
+        ).textContent = fmt(r.ingreso_bruto_reserva);
+        document.getElementById(
+          "res-comision-airbnb"
+        ).textContent = fmt(r.comision_airbnb_reserva);
+        document.getElementById(
+          "res-ingreso-neto"
+        ).textContent = fmt(r.ingreso_neto_airbnb);
+        document.getElementById(
+          "res-gastos"
+        ).textContent = fmt(r.gastos_reserva);
+        document.getElementById(
+          "res-base-impuestos"
+        ).textContent = fmt(r.base_impuestos);
+        document.getElementById(
+          "res-impuestos"
+        ).textContent = fmt(r.impuestos_estimados_reserva);
+        document.getElementById(
+          "res-ganancia"
+        ).textContent = fmt(r.ganancia_neta_reserva);
+
+        resultsEl.style.display = "block";
+      } catch (err) {
+        errorEl.textContent = err.message;
+        errorEl.style.display = "block";
+        resultsEl.style.display = "none";
+      }
+    }
+
+    document
+      .getElementById("calc-form")
+      .addEventListener("submit", enviarFormulario);
+  </script>
+</body>
+</html>

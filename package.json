@@ -1,0 +1,21 @@
+{
+  "name": "airbnb-calculadora",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/jest": "...",
+    "jest": "...",
+    "ts-jest": "...",
+    "typescript": "..."
+  },
+  "dependencies": {
+    "express": "..."
+  }
+}
