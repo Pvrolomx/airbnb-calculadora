@@ -11,6 +11,15 @@
  *   Consulte siempre a un Contador Público Certificado para decisiones reales.
  */
 
+export type Plataforma = "AIRBNB" | "VRBO" | "BOOKING" | "OTRA";
+
+const COMISIONES_PLATAFORMA: Record<Plataforma, number> = {
+  AIRBNB: 0.03,   // 3%
+  VRBO: 0.08,     // 8%
+  BOOKING: 0.15,  // 15%
+  OTRA: 0.03,     // 3% por defecto para “otra plataforma”
+};
+
 export interface CalculoInput {
   tarifa_noche: number;
   noches: number;
@@ -19,6 +28,7 @@ export interface CalculoInput {
   gasto_limpieza_real: number;
   gasto_consumibles: number;
   gasto_comisiones_otras: number;
+  plataforma?: Plataforma; // NUEVO (opcional)
 }
 
 export interface CalculoOutput {
@@ -45,7 +55,13 @@ export function calcularReservaAirbnb(input: CalculoInput): CalculoOutput {
     gasto_limpieza_real,
     gasto_consumibles,
     gasto_comisiones_otras,
+    plataforma,
   } = input;
+
+  // Si no se especifica plataforma, asumimos AIRBNB para mantener compatibilidad
+  const plataformaSeleccionada: Plataforma = plataforma ?? "AIRBNB";
+
+  const tasa_comision_plataforma = COMISIONES_PLATAFORMA[plataformaSeleccionada];
 
   // 1) Validaciones de tipo y finitud (NaN / Infinity)
   const numeros = [
@@ -98,8 +114,7 @@ export function calcularReservaAirbnb(input: CalculoInput): CalculoOutput {
   const ingreso_bruto_reserva = tarifa_noche * noches + tarifa_limpieza;
 
   // 3.2 Comisión Airbnb (3 %)
-  const COMISION_AIRBNB = 0.03;
-  const comision_airbnb_reserva = ingreso_bruto_reserva * COMISION_AIRBNB;
+  const comision_airbnb_reserva = ingreso_bruto_reserva * tasa_comision_plataforma;
 
   // 3.3 Ingreso neto desde Airbnb
   const ingreso_neto_airbnb = ingreso_bruto_reserva - comision_airbnb_reserva;

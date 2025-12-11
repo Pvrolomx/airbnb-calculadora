@@ -527,6 +527,59 @@
             </div>
           </div>
 
+          <!-- Bloque opcional de reporte PDF -->
+          <div
+            style="
+              margin-top: 16px;
+              padding: 16px 20px;
+              border-radius: 12px;
+              background: #020617;
+              border: 1px solid #1f2937;
+            "
+          >
+            <h3 style="margin: 0 0 8px 0; font-size: 1.05rem;">
+              Reporte PDF opcional
+            </h3>
+            <p
+              style="
+                margin: 0 0 12px 0;
+                font-size: 0.9rem;
+                color: #9ca3af;
+              "
+            >
+              Si quieres guardar o compartir este cálculo, puedes generar un
+              reporte PDF de esta reserva.
+            </p>
+  
+            <button
+              id="btnComprarReporte"
+              style="
+                width: 100%;
+                padding: 10px 16px;
+                border-radius: 999px;
+                border: none;
+                font-weight: 600;
+                background-color: #22c55e;
+                color: #ffffff;
+                cursor: pointer;
+              "
+            >
+              Comprar reporte PDF (MXN $99)
+            </button>
+
+            <p
+              style="
+                margin: 8px 0 0 0;
+                font-size: 0.8rem;
+                color: #6b7280;
+              "
+            >
+              El pago se procesa con Stripe en modo prueba. El reporte es solo
+              informativo y no sustituye asesoría contable.
+            </p>
+          </div>
+          <!-- Fin bloque reporte PDF -->
+
           <div class="disclaimer" id="disclaimer-text">
             <strong>Importante:</strong> Esta herramienta ofrece cálculos
             aproximados con fines informativos. No constituye asesoría fiscal,
@@ -816,6 +869,65 @@
           btnCalcular.disabled = false;
         }
       });
+
+      // === Botón "Comprar reporte PDF" ===
+      const btnComprarReporte = document.getElementById("btnComprarReporte");
+
+      if (btnComprarReporte) {
+        btnComprarReporte.addEventListener("click", async () => {
+          try {
+            // Reutilizamos los mismos campos que usas para /calcular
+            const payload = {
+              tarifa_noche: Number(
+                document.getElementById("tarifa_noche").value || 0
+              ),
+              noches: Number(
+                document.getElementById("noches").value || 0
+              ),
+              tarifa_limpieza: Number(
+                document.getElementById("tarifa_limpieza").value || 0
+              ),
+              regimen_fiscal: document.getElementById("regimen_fiscal").value,
+              gasto_limpieza_real: Number(
+                document.getElementById("gasto_limpieza_real").value || 0
+              ),
+              gasto_consumibles: Number(
+                document.getElementById("gasto_consumibles").value || 0
+              ),
+              gasto_comisiones_otras: Number(
+                document.getElementById("gasto_comisiones_otras").value || 0
+              ),
+            };
+
+            // Llamamos a tu endpoint de Stripe
+            const resp = await fetch("/crear-sesion-reporte", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(payload),
+            });
+
+            const data = await resp.json();
+
+            if (!data.ok || !data.url) {
+              alert(
+                data.error ||
+                  "No se pudo iniciar el pago para el reporte PDF."
+              );
+              return;
+            }
+
+            // Redirige a la página de pago de Stripe
+            window.location.href = data.url;
+          } catch (err) {
+            console.error("Error al crear sesión de Stripe:", err);
+            alert(
+              "Hubo un problema al iniciar el pago. Intenta de nuevo en unos segundos."
+            );
+          }
+        });
+      }
     </script>
   </body>
 </html>

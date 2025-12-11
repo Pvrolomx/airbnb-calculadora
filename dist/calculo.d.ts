@@ -1,3 +1,14 @@
+/**
+ * Calcula una estimación informativa de la ganancia neta por reserva de Airbnb.
+ *
+ * IMPORTANTE:
+ * - Los resultados son aproximados y se basan únicamente en los datos proporcionados.
+ * - No se consideran deducciones personales, situación fiscal específica
+ *   ni cambios recientes en la legislación.
+ * - Esta función NO constituye asesoría fiscal, contable ni legal.
+ *   Consulte siempre a un Contador Público Certificado para decisiones reales.
+ */
+export type Plataforma = "AIRBNB" | "VRBO" | "BOOKING" | "OTRA";
 export interface CalculoInput {
     tarifa_noche: number;
     noches: number;
@@ -6,6 +17,7 @@ export interface CalculoInput {
     gasto_limpieza_real: number;
     gasto_consumibles: number;
     gasto_comisiones_otras: number;
+    plataforma?: Plataforma;
 }
 export interface CalculoOutput {
     ingreso_bruto_reserva: number;
@@ -16,13 +28,5 @@ export interface CalculoOutput {
     impuestos_estimados_reserva: number;
     ganancia_neta_reserva: number;
 }
-/**
- * AVISO IMPORTANTE:
- * Esta función realiza cálculos aproximados con fines informativos
- * basados en los valores ingresados.
- * NO constituye asesoría fiscal, contable ni legal.
- * Para determinar tus obligaciones fiscales reales,
- * consulta a un Contador Público Certificado.
- */
 export declare function calcularReservaAirbnb(input: CalculoInput): CalculoOutput;
 //# sourceMappingURL=calculo.d.ts.map
