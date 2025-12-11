@@ -22,8 +22,8 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run tests
-        run: npm test
+      - name: Run tests (CI)
+        run: npm run test:ci
 
       - name: TypeScript compile
         run: npx tsc --noEmit
