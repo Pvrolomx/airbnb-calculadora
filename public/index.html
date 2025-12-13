@@ -302,8 +302,7 @@
             Calculadora de reserva (estimación neta)
           </div>
           <div id="app-subtitle" class="app-subtitle">
-            Ingresa los datos de una reserva y obtén una estimación informativa
-            de ingresos, gastos e impuestos.
+            Ingresa los datos de una reserva y descubre cuánto te queda después de comisiones y gastos.
           </div>
         </div>
         <button id="lang-toggle" class="lang-toggle" type="button">
@@ -527,58 +526,56 @@
             </div>
           </div>
 
-          <!-- Bloque opcional de reporte PDF -->
-          <div
-            style="
-              margin-top: 16px;
-              padding: 16px 20px;
-              border-radius: 12px;
-              background: #020617;
-              border: 1px solid #1f2937;
-            "
-          >
-            <h3 style="margin: 0 0 8px 0; font-size: 1.05rem;">
-              Reporte PDF opcional
-            </h3>
-            <p
-              style="
-                margin: 0 0 12px 0;
-                font-size: 0.9rem;
-                color: #9ca3af;
-              "
-            >
-              Si quieres guardar o compartir este cálculo, puedes generar un
-              reporte PDF de esta reserva.
-            </p>
-  
-            <button
-              id="btnComprarReporte"
-              style="
-                width: 100%;
-                padding: 10px 16px;
-                border-radius: 999px;
-                border: none;
-                font-weight: 600;
-                background-color: #22c55e;
-                color: #ffffff;
-                cursor: pointer;
-              "
-            >
-              Comprar reporte PDF (MXN $99)
-            </button>
+<!-- Bloque opcional de reporte PDF -->
+<div
+  style="
+    margin-top: 16px;
+    padding: 16px 20px;
+    border-radius: 12px;
+    background: #020617;
+    border: 1px solid #1f2937;
+  "
+>
+  <h3 id="pdf-title" style="margin: 0 0 8px 0; font-size: 1.05rem;">
+    Reporte PDF opcional
+  </h3>
 
-            <p
-              style="
-                margin: 8px 0 0 0;
-                font-size: 0.8rem;
-                color: #6b7280;
-              "
-            >
-              El pago se procesa con Stripe en modo prueba. El reporte es solo
-              informativo y no sustituye asesoría contable.
-            </p>
-          </div>
-          <!-- Fin bloque reporte PDF -->
+  <p
+    id="pdf-subtitle"
+    style="margin: 0 0 12px 0; font-size: 0.9rem; color: #9ca3af;"
+  >
+    Si quieres guardar o compartir este cálculo, puedes generar un reporte PDF de este hospedaje.
+  </p>
+
+  <button
+    id="btnComprarReporte"
+    style="
+      width: 100%;
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: none;
+      font-weight: 600;
+      background-color: #22c55e;
+      color: #ffffff;
+      cursor: pointer;
+    "
+  >
+    Comprar 10 cálculos — $10 MXN
+
+  </button>
+
+  <p
+    id="pdf-stripe-note"
+    style="
+      margin: 8px 0 0 0;
+      font-size: 0.8rem;
+      color: #6b7280;
+    "
+  >
+    Cada cálculo genera un reporte descargable en PDF. Pago procesado con Stripe. Herramienta informativa, no sustituye asesoría contable.
+  </p>
+</div>
+<!-- Fin bloque reporte PDF -->
 
           <div class="disclaimer" id="disclaimer-text">
             <strong>Importante:</strong> Esta herramienta ofrece cálculos
@@ -625,309 +622,362 @@
       </main>
     </div>
 
-    <script>
-      // ===== Textos ES/EN =====
-      const texts = {
-        es: {
-          title: "Calculadora de reserva (estimación neta)",
-          subtitle:
-            "Ingresa los datos de una reserva y obtén una estimación informativa de ingresos, gastos e impuestos.",
-          formTitle: "Datos de la reserva",
-          labelPlatform: "Plataforma / canal de reserva",
-          labelTarifaNoche: "Tarifa por noche (MXN)",
-          labelNoches: "Noches",
-          labelTarifaLimpieza: "Tarifa de limpieza cobrada (MXN)",
-          labelRegimen: "Régimen fiscal (aprox.)",
-          labelGastoLimpieza: "Gasto real de limpieza (MXN)",
-          labelGastoConsumibles: "Gasto en consumibles (MXN)",
-          labelGastoOtras: "Otras comisiones / gastos (MXN)",
-          btnCalcular: "Calcular estimado",
-          resIngresoBruto: "Ingreso bruto (reserva)",
-          resComision: "Comisión plataforma (estimada)",
-          resGastos: "Gastos directos reserva",
-          resImpuestos: "Impuesto estimado (aprox.)",
-          resGananciaNeta: "Ganancia neta estimada",
-          sideTitle: "Qué hace esta herramienta",
-          sideHighlight:
-            "Calcula, para una sola reserva, una estimación de:\n• Ingreso bruto\n• Comisión de la plataforma (según selección)\n• Gastos directos que ingresas\n• Impuesto aproximado con tasa fija\n• Ganancia neta estimada",
-          sidePlatformNote:
-            "Nota de plataforma:\n• Airbnb: 3% (aprox. comisión host)\n• Vrbo: 8% (aprox.)\n• Booking.com: 15% (aprox.)\n• Otra: 0% (puedes ajustar en backend)",
-          sideLogTitle: "Log de cálculo (últimas ejecuciones)",
-          disclaimer:
-            "Importante: Esta herramienta ofrece cálculos aproximados con fines informativos. No constituye asesoría fiscal, contable ni legal.",
-          // NUEVO: textos de las opciones del select
-          regimenOptionSinRfc: "Sin RFC / plataforma retiene",
-          regimenOptionResico: "RESICO",
-          regimenOptionActividad: "Actividad empresarial",
-        },
-        en: {
-          title: "Booking calculator (net estimate)",
-          subtitle:
-            "Enter a single booking and get an informative estimate of income, expenses and taxes.",
-          formTitle: "Booking data",
-          labelPlatform: "Platform / channel",
-          labelTarifaNoche: "Nightly rate (MXN)",
-          labelNoches: "Nights",
-          labelTarifaLimpieza: "Cleaning fee charged (MXN)",
-          labelRegimen: "Tax category (approx.)",
-          labelGastoLimpieza: "Actual cleaning cost (MXN)",
-          labelGastoConsumibles: "Supplies cost (MXN)",
-          labelGastoOtras: "Other fees / costs (MXN)",
-          btnCalcular: "Calculate estimate",
-          resIngresoBruto: "Gross income (booking)",
-          resComision: "Platform commission (estimated)",
-          resGastos: "Direct booking expenses",
-          resImpuestos: "Estimated tax (approx.)",
-          resGananciaNeta: "Estimated net income",
-          sideTitle: "What this tool does",
-          sideHighlight:
-            "For a single booking, it estimates:\n• Gross income\n• Platform commission (based on selection)\n• Direct expenses you enter\n• Approx. tax with fixed rate\n• Estimated net income",
-          sidePlatformNote:
-            "Platform note:\n• Airbnb: 3% (approx. host commission)\n• Vrbo: 8% (approx.)\n• Booking.com: 15% (approx.)\n• Other: 0% (you can tweak in backend)",
-          sideLogTitle: "Calculation log (last runs)",
-          disclaimer:
-            "Important: This tool provides approximate calculations for informational purposes only. It does not constitute tax, accounting or legal advice.",
-          // NUEVO: textos de opciones del select
-          regimenOptionSinRfc: "No tax ID / platform withholds",
-          regimenOptionResico: "RESICO",
-          regimenOptionActividad: "Business activity",
-        },
-      };
+<script>
+  // ========= Textos ES / EN =========
+  const texts = {
+    es: {
+      // Título y subtítulo
+      title: "¿Cuánto ganas por tu hospedaje?",
+      subtitle: "Calculadora de ganancias por hospedaje",
+      tagline: "Ve cuánto te queda realmente por cada reserva",
 
-      let currentLang = "es";
+      // Formulario principal
+      formTitle: "Datos del hospedaje",
+      labelPlatform: "¿Dónde se hizo la reserva?",
+      labelTarifaNoche: "Precio por noche que paga el huésped (MXN)",
+      labelNoches: "Número de noches",
+      labelTarifaLimpieza: "Cargo de limpieza al huésped (MXN)",
+      labelRegimen: "Régimen fiscal (aprox.)",
+      labelGastoLimpieza: "Lo que realmente pagas por limpieza (MXN)",
+      labelGastoConsumibles: "Amenidades e insumos (café, jabón, etc.) (MXN)",
+      labelGastoOtras: "Otros gastos de esta reserva (MXN)",
+      btnCalcular: "Ver cuánto me queda",
 
-      function applyLang(lang) {
-        const t = texts[lang];
-        document.documentElement.lang = lang;
-        document.getElementById("app-title").innerText = t.title;
-        document.getElementById("app-subtitle").innerText = t.subtitle;
-        document.getElementById("form-title").innerText = t.formTitle;
-        document.getElementById("label-platform").innerText = t.labelPlatform;
-        document.getElementById("label-tarifa-noche").innerText =
-          t.labelTarifaNoche;
-        document.getElementById("label-noches").innerText = t.labelNoches;
-        document.getElementById("label-tarifa-limpieza").innerText =
-          t.labelTarifaLimpieza;
-        document.getElementById("label-regimen").innerText = t.labelRegimen;
-        document.getElementById("label-gasto-limpieza").innerText =
-          t.labelGastoLimpieza;
-        document.getElementById("label-gasto-consumibles").innerText =
-          t.labelGastoConsumibles;
-        document.getElementById("label-gasto-otras").innerText =
-          t.labelGastoOtras;
-        document.getElementById("btn-calcular-text").innerText =
-          t.btnCalcular;
-        // 🔽🔽 NUEVO: cambiar textos del select según idioma
-        document.getElementById("opt-regimen-sinrfc").textContent =
-          t.regimenOptionSinRfc;
-        document.getElementById("opt-regimen-resico").textContent =
-          t.regimenOptionResico;
-        document.getElementById("opt-regimen-actividad").textContent =
-          t.regimenOptionActividad;
-        // 🔼🔼 NUEVO
-        document.getElementById("res-label-ingreso-bruto").innerText =
-          t.resIngresoBruto;
-        document.getElementById("res-label-comision").innerText =
-          t.resComision;
-        document.getElementById("res-label-gastos").innerText = t.resGastos;
-        document.getElementById("res-label-impuestos").innerText =
-          t.resImpuestos;
-        document.getElementById("res-label-ganancia-neta").innerText =
-          t.resGananciaNeta;
-        document.getElementById("side-title").innerText = t.sideTitle;
-        document.getElementById("side-highlight-text").innerText =
-          t.sideHighlight;
-        document.getElementById("side-platform-note").innerText =
-          t.sidePlatformNote;
-        document.getElementById("side-log-title").innerText =
-          t.sideLogTitle;
-        document.getElementById("disclaimer-text").innerText = t.disclaimer;
+      // Resultados
+      resIngresoBruto: "Ingreso bruto (reserva)",
+      resComision: "Comisión plataforma (estimada)",
+      resGastos: "Gastos directos reserva",
+      resImpuestos: "Impuesto estimado (aprox.)",
+      resGananciaNeta: "Ganancia neta estimada",
 
-        const langToggleText = document.getElementById("lang-toggle-text");
-        const langToggleFlag = document.querySelector("#lang-toggle .flag");
+      // Opciones del select de régimen
+      regimenOptionSinRfc: "No facturo (la plataforma retiene)",
+      regimenOptionResico: "RESICO",
+      regimenOptionActividad: "Actividad empresarial",
 
-        if (lang === "es") {
-          langToggleText.textContent = "ES";
-          langToggleFlag.textContent = "🇲🇽";
-        } else {
-          langToggleText.textContent = "EN";
-          langToggleFlag.textContent = "🇺🇸";
-        }
-      }
+      // Bloque PDF
+      pdfTitle: "Reporte PDF opcional",
+      pdfSubtitle:
+        "Si quieres guardar o compartir este cálculo, puedes generar un reporte PDF de este hospedaje.",
+      pdfButton: "Comprar 10 cálculos — $10 MXN",
+      pdfStripeNote:
+        "Cada cálculo genera un reporte descargable en PDF. Pago procesado con Stripe. Herramienta informativa, no sustituye asesoría contable.",
+      
+      // Panel derecho
+      sideTitle: "Qué hace esta herramienta",
+      sideHighlightHtml:
+        "Calcula, para una sola reserva, una estimación de:<br />" +
+        "• Total que paga el huésped<br />" +
+        "• Comisión de la plataforma (según selección)<br />" +
+        "• Gastos directos de la reserva<br />" +
+        "• Impuesto aproximado con tasa fija<br />" +
+        "• Lo que te queda de ganancia",
+      sidePlatformNoteHtml:
+        "<strong>Nota de plataforma:</strong><br />" +
+        "• Airbnb: 3% (aprox. comisión host)<br />" +
+        "• Vrbo: 8% (aprox.)<br />" +
+        "• Booking.com: 15% (aprox.)<br />" +
+        "• Otra: 0% (puedes ajustar en backend)",
+      sideLogTitle: "Log de cálculo (últimas ejecuciones)",
 
-      document
-        .getElementById("lang-toggle")
-        .addEventListener("click", () => {
-          currentLang = currentLang === "es" ? "en" : "es";
-          applyLang(currentLang);
+      // Disclaimer general
+      disclaimerHtml:
+        "<strong>Importante:</strong> Esta herramienta ofrece cálculos aproximados con fines informativos. No constituye asesoría fiscal, contable ni legal.",
+    },
+
+    en: {
+      // Title + subtitle
+      title: "How much do you earn from your reservation?",
+      subtitle: "Booking profit calculator.",
+      tagline: "See what you really keep from each booking.",
+
+      // Form
+      formTitle: "Booking details",
+      labelPlatform: "Where was the booking made?",
+      labelTarifaNoche: "Nightly price paid by the guest (MXN)",
+      labelNoches: "Number of nights",
+      labelTarifaLimpieza: "Cleaning fee charged to the guest (MXN)",
+      labelRegimen: "Tax category (approx.)",
+      labelGastoLimpieza: "Actual cleaning cost you pay (MXN)",
+      labelGastoConsumibles: "Supplies & amenities (coffee, soap, etc.) (MXN)",
+      labelGastoOtras: "Other booking-related costs (MXN)",
+      btnCalcular: "See my net earnings",
+
+      // Results
+      resIngresoBruto: "Gross income (booking)",
+      resComision: "Platform commission (estimated)",
+      resGastos: "Direct booking expenses",
+      resImpuestos: "Estimated tax (approx.)",
+      resGananciaNeta: "Estimated net income",
+
+      // Select options
+      regimenOptionSinRfc: "No tax ID / platform withholds",
+      regimenOptionResico: "RESICO",
+      regimenOptionActividad: "Business activity",
+
+      // PDF block
+      pdfTitle: "Optional PDF report",
+      pdfSubtitle: "If you want to save or share this calculation, you can generate a PDF report for this stay.",
+      pdfSectionDescription:
+         "Save and share calculations (optional).",
+      pdfButton: "Buy 10 calculations — $10 MXN",
+      pdfStripeNote:
+        "Each calculation includes a downloadable PDF report. Payments are processed via Stripe. This is an informational tool and does not replace accounting advice.",
+
+      // Right panel
+      sideTitle: "What this tool does",
+      sideHighlightHtml:
+        "For a single booking, it estimates:<br />" +
+        "• Total paid by the guest<br />" +
+        "• Platform commission (based on selection)<br />" +
+        "• Direct booking expenses you enter<br />" +
+        "• Approx. tax with a fixed rate<br />" +
+        "• What you keep as profit",
+      sidePlatformNoteHtml:
+        "<strong>Platform note:</strong><br />" +
+        "• Airbnb: 3% (approx. host fee)<br />" +
+        "• Vrbo: 8% (approx.)<br />" +
+        "• Booking.com: 15% (approx.)<br />" +
+        "• Other: 0% (you can tweak this in the backend)",
+      sideLogTitle: "Calculation log (last runs)",
+
+      // Disclaimer
+      disclaimerHtml:
+        "<strong>Important:</strong> This tool provides approximate calculations for informational purposes only. It does not constitute tax, accounting, or legal advice.",
+    },
+  };
+
+  function applyLang(lang) {
+    currentLang = lang;
+    const t = texts[lang];
+    document.documentElement.lang = lang;
+
+    // Título principal
+    const appTitleEl = document.getElementById("app-title");
+    if (appTitleEl) appTitleEl.textContent = t.title;
+
+    const appSubtitleEl = document.getElementById("app-subtitle");
+    if (appSubtitleEl) appSubtitleEl.textContent = t.subtitle;
+
+    // Formulario
+    const formTitleEl = document.getElementById("form-title");
+    if (formTitleEl) formTitleEl.textContent = t.formTitle;
+
+    const setText = (id, value) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = value;
+    };
+
+    setText("label-platform", t.labelPlatform);
+    setText("label-tarifa-noche", t.labelTarifaNoche);
+    setText("label-noches", t.labelNoches);
+    setText("label-tarifa-limpieza", t.labelTarifaLimpieza);
+    setText("label-regimen", t.labelRegimen);
+    setText("label-gasto-limpieza", t.labelGastoLimpieza);
+    setText("label-gasto-consumibles", t.labelGastoConsumibles);
+    setText("label-gasto-otras", t.labelGastoOtras);
+    setText("btn-calcular-text", t.btnCalcular);
+
+    // Resultados
+    setText("res-label-ingreso-bruto", t.resIngresoBruto);
+    setText("res-label-comision", t.resComision);
+    setText("res-label-gastos", t.resGastos);
+    setText("res-label-impuestos", t.resImpuestos);
+    setText("res-label-ganancia-neta", t.resGananciaNeta);
+
+    // Opciones del select
+    setText("opt-regimen-sinrfc", t.regimenOptionSinRfc);
+    setText("opt-regimen-resico", t.regimenOptionResico);
+    setText("opt-regimen-actividad", t.regimenOptionActividad);
+
+    // Bloque PDF
+    setText("pdf-section-title", t.pdfSectionTitle);
+    setText("pdf-section-description", t.pdfSectionDescription);
+    setText("btnComprarReporte", t.pdfButton);
+    setText("pdf-stripe-note", t.pdfStripeNote);
+
+    // Panel derecho
+    setText("side-title", t.sideTitle);
+
+    const sideHighlightEl = document.getElementById("side-highlight-text");
+    if (sideHighlightEl) sideHighlightEl.innerHTML = t.sideHighlightHtml;
+
+    const sidePlatformEl = document.getElementById("side-platform-note");
+    if (sidePlatformEl) sidePlatformEl.innerHTML = t.sidePlatformNoteHtml;
+
+    setText("side-log-title", t.sideLogTitle);
+
+    // Disclaimer
+    const disclaimerEl = document.getElementById("disclaimer-text");
+    if (disclaimerEl) disclaimerEl.innerHTML = t.disclaimerHtml;
+
+    // PDF block
+    setText("pdf-title", t.pdfTitle);
+    setText("pdf-subtitle", t.pdfSubtitle);
+    setText("btnComprarReporte", t.pdfButton);
+    setText("pdf-stripe-note", t.pdfStripeNote);
+
+    // Botón de idioma
+    const langToggleText = document.getElementById("lang-toggle-text");
+    const langToggleFlag = document.querySelector("#lang-toggle .flag");
+    if (lang === "es") {
+      if (langToggleText) langToggleText.textContent = "ES";
+      if (langToggleFlag) langToggleFlag.textContent = "🇲🇽";
+    } else {
+      if (langToggleText) langToggleText.textContent = "EN";
+      if (langToggleFlag) langToggleFlag.textContent = "🇺🇸";
+    }
+  }
+
+  // Toggle ES/EN
+  const langToggle = document.getElementById("lang-toggle");
+  if (langToggle) {
+    langToggle.addEventListener("click", () => {
+      currentLang = currentLang === "es" ? "en" : "es";
+      applyLang(currentLang);
+    });
+  }
+
+  // Primer render en ES
+  applyLang("es");
+
+  // ========= Lógica de cálculo / API =========
+
+  function buildInputFromForm() {
+    const plataformaInput = document.querySelector(
+      'input[name="plataforma"]:checked'
+    );
+    const plataforma = plataformaInput ? plataformaInput.value : "AIRBNB";
+
+    return {
+      tarifa_noche: Number(
+        document.getElementById("tarifa_noche").value || 0
+      ),
+      noches: Number(document.getElementById("noches").value || 0),
+      tarifa_limpieza: Number(
+        document.getElementById("tarifa_limpieza").value || 0
+      ),
+      regimen_fiscal: document.getElementById("regimen_fiscal").value,
+      gasto_limpieza_real: Number(
+        document.getElementById("gasto_limpieza_real").value || 0
+      ),
+      gasto_consumibles: Number(
+        document.getElementById("gasto_consumibles").value || 0
+      ),
+      gasto_comisiones_otras: Number(
+        document.getElementById("gasto_comisiones_otras").value || 0
+      ),
+      plataforma,
+    };
+  }
+
+  function appendLog(message) {
+    const panel = document.getElementById("log-panel");
+    if (!panel) return;
+    const now = new Date().toLocaleTimeString();
+    panel.textContent = `[${now}] ${message}\n` + (panel.textContent || "");
+  }
+
+  const formEl = document.getElementById("calc-form");
+  const btnCalcular = document.getElementById("btn-calcular");
+
+  if (formEl) {
+    formEl.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const payload = buildInputFromForm();
+      if (btnCalcular) btnCalcular.disabled = true;
+      appendLog("Enviando cálculo al backend…");
+
+      try {
+        const res = await fetch("/calcular", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
         });
 
-      // Primer render ES
-      applyLang("es");
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          appendLog(
+            `Error HTTP ${res.status}: ${err.error || "Error desconocido"}`
+          );
+          alert(
+            err.error ||
+              "Ocurrió un error al calcular. Revisa los datos ingresados."
+          );
+          return;
+        }
 
-      // ===== FUNCIONES DE CÁLCULO / API =====
+        const data = await res.json();
+        appendLog("Cálculo exitoso.");
+        const r = data.resultado;
+        document.getElementById("res-ingreso-bruto").textContent =
+          r.ingreso_bruto_reserva.toFixed(2) + " MXN";
+        document.getElementById("res-comision").textContent =
+          r.comision_airbnb_reserva.toFixed(2) + " MXN";
+        document.getElementById("res-gastos").textContent =
+          r.gastos_reserva.toFixed(2) + " MXN";
+        document.getElementById("res-impuestos").textContent =
+          r.impuestos_estimados_reserva.toFixed(2) + " MXN";
+        
+        let lang = localStorage.getItem("lang") || "es";
 
-      function buildInputFromForm() {
-        const plataformaInput = document.querySelector(
-          'input[name="plataforma"]:checked'
+        applyLang(currentLang);
+
+        const netEl = document.getElementById("res-ganancia-neta");
+        netEl.textContent =
+          r.ganancia_neta_reserva.toFixed(2) + " MXN";
+        netEl.classList.remove("positive", "negative");
+        netEl.classList.add(
+          r.ganancia_neta_reserva >= 0 ? "positive" : "negative"
         );
-        const plataforma = plataformaInput
-          ? plataformaInput.value
-          : "AIRBNB";
 
-        return {
-          tarifa_noche: Number(
-            document.getElementById("tarifa_noche").value || 0
-          ),
-          noches: Number(document.getElementById("noches").value || 0),
-          tarifa_limpieza: Number(
-            document.getElementById("tarifa_limpieza").value || 0
-          ),
-          regimen_fiscal: document.getElementById("regimen_fiscal").value,
-          gasto_limpieza_real: Number(
-            document.getElementById("gasto_limpieza_real").value || 0
-          ),
-          gasto_consumibles: Number(
-            document.getElementById("gasto_consumibles").value || 0
-          ),
-          gasto_comisiones_otras: Number(
-            document.getElementById("gasto_comisiones_otras").value || 0
-          ),
-          plataforma,
-        };
+        document.getElementById("results").style.display = "grid";
+      } catch (err) {
+        console.error(err);
+        appendLog("Error de red o JS en el navegador.");
+        alert(
+          "No se pudo contactar al backend. Asegúrate de que el servidor esté corriendo."
+        );
+      } finally {
+        if (btnCalcular) btnCalcular.disabled = false;
       }
+    });
+  }
 
-      function appendLog(message) {
-        const panel = document.getElementById("log-panel");
-        const now = new Date().toLocaleTimeString();
-        panel.textContent =
-          `[${now}] ${message}\n` + (panel.textContent || "");
-      }
+  // === Botón "Desbloquear 10 cálculos" (Stripe Checkout) ===
+  const btnComprarReporte = document.getElementById("btnComprarReporte");
 
-      const formEl = document.getElementById("calc-form");
-      const btnCalcular = document.getElementById("btn-calcular");
-
-      formEl.addEventListener("submit", async (e) => {
-        e.preventDefault();
-
+  if (btnComprarReporte) {
+    btnComprarReporte.addEventListener("click", async () => {
+      try {
         const payload = buildInputFromForm();
 
-        btnCalcular.disabled = true;
-        appendLog("Enviando cálculo al backend…");
-
-        try {
-          const res = await fetch("/calcular", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          });
-
-          if (!res.ok) {
-            const err = await res.json().catch(() => ({}));
-            appendLog(
-              `Error HTTP ${res.status}: ${
-                err.error || "Error desconocido"
-              }`
-            );
-            alert(
-              err.error ||
-                "Ocurrió un error al calcular. Revisa los datos ingresados."
-            );
-            return;
-          }
-
-          const data = await res.json();
-          appendLog("Cálculo exitoso.");
-
-          const r = data.resultado;
-
-          document.getElementById("res-ingreso-bruto").textContent =
-            r.ingreso_bruto_reserva.toFixed(2) + " MXN";
-          document.getElementById("res-comision").textContent =
-            r.comision_airbnb_reserva.toFixed(2) + " MXN";
-          document.getElementById("res-gastos").textContent =
-            r.gastos_reserva.toFixed(2) + " MXN";
-          document.getElementById("res-impuestos").textContent =
-            r.impuestos_estimados_reserva.toFixed(2) + " MXN";
-
-          const netEl = document.getElementById("res-ganancia-neta");
-          netEl.textContent =
-            r.ganancia_neta_reserva.toFixed(2) + " MXN";
-          netEl.classList.remove("positive", "negative");
-          netEl.classList.add(
-            r.ganancia_neta_reserva >= 0 ? "positive" : "negative"
-          );
-
-          document.getElementById("results").style.display = "grid";
-        } catch (err) {
-          console.error(err);
-          appendLog("Error de red o JS en el navegador.");
-          alert(
-            "No se pudo contactar al backend. Asegúrate de que el servidor está corriendo."
-          );
-        } finally {
-          btnCalcular.disabled = false;
-        }
-      });
-
-      // === Botón "Comprar reporte PDF" ===
-      const btnComprarReporte = document.getElementById("btnComprarReporte");
-
-      if (btnComprarReporte) {
-        btnComprarReporte.addEventListener("click", async () => {
-          try {
-            // Reutilizamos los mismos campos que usas para /calcular
-            const payload = {
-              tarifa_noche: Number(
-                document.getElementById("tarifa_noche").value || 0
-              ),
-              noches: Number(
-                document.getElementById("noches").value || 0
-              ),
-              tarifa_limpieza: Number(
-                document.getElementById("tarifa_limpieza").value || 0
-              ),
-              regimen_fiscal: document.getElementById("regimen_fiscal").value,
-              gasto_limpieza_real: Number(
-                document.getElementById("gasto_limpieza_real").value || 0
-              ),
-              gasto_consumibles: Number(
-                document.getElementById("gasto_consumibles").value || 0
-              ),
-              gasto_comisiones_otras: Number(
-                document.getElementById("gasto_comisiones_otras").value || 0
-              ),
-            };
-
-            // Llamamos a tu endpoint de Stripe
-            const resp = await fetch("/crear-sesion-reporte", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(payload),
-            });
-
-            const data = await resp.json();
-
-            if (!data.ok || !data.url) {
-              alert(
-                data.error ||
-                  "No se pudo iniciar el pago para el reporte PDF."
-              );
-              return;
-            }
-
-            // Redirige a la página de pago de Stripe
-            window.location.href = data.url;
-          } catch (err) {
-            console.error("Error al crear sesión de Stripe:", err);
-            alert(
-              "Hubo un problema al iniciar el pago. Intenta de nuevo en unos segundos."
-            );
-          }
+        const resp = await fetch("/crear-sesion-reporte", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
         });
+
+        const data = await resp.json();
+
+        if (!data.ok || !data.url) {
+          alert(
+            data.error ||
+              "No se pudo iniciar el pago para el reporte PDF."
+          );
+          return;
+        }
+
+        window.location.href = data.url;
+      } catch (err) {
+        console.error("Error al crear sesión de Stripe:", err);
+        alert(
+          "Hubo un problema al iniciar el pago. Intenta de nuevo en unos momentos."
+        );
       }
-    </script>
-  </body>
+    });
+  }
+</script>
+</body>
 </html>
