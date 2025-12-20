@@ -877,6 +877,25 @@
     const now = new Date().toLocaleTimeString();
     panel.textContent = `[${now}] ${message}\n` + (panel.textContent || "");
   }
+// Helper: Agregar equivalente en USD
+  async function addUsd(mxnAmount, elementId) {
+    try {
+      const response = await fetch('/fx-usd');
+      const data = await response.json();
+      if (!data.ok || !data.rate) return;
+      
+      const usd = (mxnAmount / data.rate).toFixed(2);
+      const element = document.getElementById(elementId);
+      
+      if (element && element.textContent) {
+        element.textContent += ' (~' + usd + ' USD)';
+      }
+    } catch (error) {
+      console.error('Error FX:', error);
+    }
+  }
+  
+  async function addUsd(m,e){try{const r=await fetch("/fx-usd");const d=await r.json();if(d.ok){const el=document.getElementById(e);if(el)el.textContent+=" (~"+(m/d.rate).toFixed(2)+" USD)";}}catch(x){}}
 
   const formEl = document.getElementById("calc-form");
   const btnCalcular = document.getElementById("btn-calcular");
@@ -927,6 +946,14 @@
         const netEl = document.getElementById("res-ganancia-neta");
         netEl.textContent =
           r.ganancia_neta_reserva.toFixed(2) + " MXN";
+        netEl.classList.remove("positive", "negative");
+
+        // Agregar equivalentes en USD
+        await addUsd(r.ingreso_bruto_reserva, "res-ingreso-bruto");
+        await addUsd(r.comision_airbnb_reserva, "res-comision");
+        await addUsd(r.gastos_reserva, "res-gastos");
+        await addUsd(r.impuestos_estimados_reserva, "res-impuestos");
+        await addUsd(r.ganancia_neta_reserva, "res-ganancia-neta");
         netEl.classList.remove("positive", "negative");
         netEl.classList.add(
           r.ganancia_neta_reserva >= 0 ? "positive" : "negative"

@@ -284,4 +284,24 @@ app.get("/cancel", (_req, res) => {
 app.listen(port, () => {
     console.log(`Servidor escuchando en http://localhost:${port}`);
 });
+// Endpoint tipo cambio
+app.get("/fx-usd", async (req, res) => {
+    var _a, _b, _c, _d, _e;
+    try {
+        const t = process.env.BANXICO_TOKEN;
+        if (!t)
+            return res.status(500).json({ ok: false, error: "No token" });
+        const r = await fetch("https://www.banxico.org.mx/SieAPIRest/service/v1/series/SF43718/datos/oportuno", { headers: { "Bmx-Token": t, "Accept": "application/json" } });
+        if (!r.ok)
+            throw new Error("Banxico error");
+        const d = await r.json();
+        const rate = Number(String((_e = (_d = (_c = (_b = (_a = d === null || d === void 0 ? void 0 : d.bmx) === null || _a === void 0 ? void 0 : _a.series) === null || _b === void 0 ? void 0 : _b[0]) === null || _c === void 0 ? void 0 : _c.datos) === null || _d === void 0 ? void 0 : _d[0]) === null || _e === void 0 ? void 0 : _e.dato).replace(",", ""));
+        if (!Number.isFinite(rate))
+            throw new Error("Rate invalid");
+        return res.json({ ok: true, rate });
+    }
+    catch (e) {
+        return res.status(500).json({ ok: false, error: "FX error" });
+    }
+});
 //# sourceMappingURL=server.js.map
