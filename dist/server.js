@@ -256,7 +256,7 @@ app.post("/crear-sesion-reporte", async (_req, res) => {
                 },
             ],
             // 🔴 IMPORTANTE: aquí va la IP de tu Raspberry, NO localhost
-            success_url: "http://192.168.1.79:3000/success",
+            success_url: "http://192.168.1.79:3000/?payment=success",
             cancel_url: "http://192.168.1.79:3000/cancel",
         });
         return res.json({

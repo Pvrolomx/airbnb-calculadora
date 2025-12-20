@@ -293,6 +293,7 @@
         font-weight: 600;
       }
     </style>
+    <script src="/credits.js?v=1766257036"></script>
   </head>
   <body>
     <div class="app-shell">
@@ -304,7 +305,13 @@
           <div id="app-subtitle" class="app-subtitle">
             Ingresa los datos de una reserva y descubre cuánto te queda después de comisiones y gastos.
           </div>
+          <div id="credit-counter" style="margin-top:16px;padding:8px 16px;background:#10b981;color:white;border-radius:8px;font-size:14px;font-weight:700;text-align:center;display:inline-block;">
+            ⚡ 10 cálculos restantes
+          </div>
         </div>
+          <button onclick="localStorage.clear();location.reload();" style="margin-left:10px;padding:6px 12px;background:#6366f1;color:white;border:none;border-radius:6px;cursor:pointer;font-size:12px;">
+            🔄 Reset
+          </button>
         <button id="lang-toggle" class="lang-toggle" type="button">
           <span class="flag">🇲🇽</span>
           <span id="lang-toggle-text">ES</span>
@@ -550,6 +557,7 @@
   <button
     id="btnComprarReporte"
     style="
+      display: none;
       width: 100%;
       padding: 10px 16px;
       border-radius: 999px;
@@ -558,27 +566,19 @@
       background-color: #22c55e;
       color: #ffffff;
       cursor: pointer;
+      font-size: 16px;
     "
   >
     Comprar 10 cálculos — $10 MXN
 
   </button>
 
-  <p
-    id="pdf-stripe-note"
-    style="
-      margin: 8px 0 0 0;
-      font-size: 0.8rem;
-      color: #6b7280;
-    "
-  >
-    Cada cálculo genera un reporte descargable en PDF. Pago procesado con Stripe. Herramienta informativa, no sustituye asesoría contable.
-  </p>
+
 </div>
 <!-- Fin bloque reporte PDF -->
 
-          <div class="disclaimer" id="disclaimer-text">
-            <strong>Importante:</strong> Esta herramienta ofrece cálculos
+          <div class="disclaimer" id="disclaimer-text" style="margin-top: 24px; padding: 16px; background: #1f2937; border-left: 4px solid #3b82f6; border-radius: 8px; font-size: 14px; line-height: 1.6;">
+            <strong style="color: #60a5fa;">Importante:</strong> Esta herramienta ofrece cálculos
             aproximados con fines informativos. No constituye asesoría fiscal,
             contable ni legal.
           </div>
@@ -608,15 +608,6 @@
               • Otra: 0% (puedes ajustar en backend)
             </div>
 
-            <div>
-              <div
-                style="font-size: 12px; color: #9ca3af; margin-bottom: 4px"
-                id="side-log-title"
-              >
-                Log de cálculo (últimas ejecuciones)
-              </div>
-              <div id="log-panel" class="log-panel"></div>
-            </div>
           </div>
         </aside>
       </main>
@@ -834,12 +825,17 @@
   if (langToggle) {
     langToggle.addEventListener("click", () => {
       currentLang = currentLang === "es" ? "en" : "es";
+      localStorage.setItem("lang", currentLang);
       applyLang(currentLang);
+      // Trigger update en credits.js
+      if(window.updateDisplay) window.updateDisplay();
     });
   }
 
-  // Primer render en ES
-  applyLang("es");
+  // Cargar idioma guardado o defaultear a ES
+  const savedLang = localStorage.getItem("lang") || "es";
+  currentLang = savedLang;
+  applyLang(savedLang);
 
   // ========= Lógica de cálculo / API =========
 
@@ -909,7 +905,11 @@
       appendLog("Enviando cálculo al backend…");
 
       try {
-        const res = await fetch("/calcular", {
+        if (!useCredit()) {
+        return;
+      }
+
+      const res = await fetch("/calcular", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
