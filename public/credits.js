@@ -15,6 +15,7 @@ function updateDisplay(){
       remaining:'⚡ '+c+' cálculos restantes',
       none:'⚠️ Sin cálculos disponibles',
       btnNone:'Sin cálculos - Compra más',
+      btnNormal:'Ver cuánto me queda',
       alert:'No tienes cálculos disponibles. Compra más para continuar.',
       paymentSuccess:'¡Pago exitoso! +10 cálculos agregados a tu cuenta'
     },
@@ -22,6 +23,7 @@ function updateDisplay(){
       remaining:'⚡ '+c+' calculations remaining',
       none:'⚠️ No calculations available',
       btnNone:'No calculations - Buy more',
+      btnNormal:'See my net earnings',
       alert:'You have no calculations available. Buy more to continue.',
       paymentSuccess:'Payment successful! +10 calculations added to your account'
     }
@@ -59,18 +61,19 @@ function updateDisplay(){
     }
   }
   
+  // Actualizar botón de calcular
+  const btnText=document.getElementById('btn-calcular-text');
   const btn=document.getElementById('btn-calcular');
+  
   if(btn){
-    if(!window._originalBtnText && btn.textContent){
-      window._originalBtnText=btn.textContent;
-    }
-    
     btn.disabled=c<=0;
-    
+  }
+  
+  if(btnText){
     if(c<=0){
-      btn.textContent=t.btnNone;
+      btnText.textContent=t.btnNone;
     } else {
-      btn.textContent=window._originalBtnText||'Ver cuánto me queda';
+      btnText.textContent=t.btnNormal;
     }
   }
   
@@ -79,12 +82,10 @@ function updateDisplay(){
   const pdfBlock=document.getElementById('pdf-block');
   
   if(buyButton){
-    // Mostrar botón SOLO cuando créditos = 0
     buyButton.style.display=c<=0?'block':'none';
   }
   
   if(pdfBlock){
-    // Mostrar bloque de pago SOLO cuando créditos = 0
     pdfBlock.style.display=c<=0?'block':'none';
   }
   
@@ -110,7 +111,6 @@ window.addEventListener('load',()=>{
     addCredits(10);
     window.history.replaceState({},document.title,'/');
     if(window._creditTexts){
-      // Mostrar notificación amigable en vez de alert
       const notification = document.createElement('div');
       notification.style.cssText = `
         position: fixed;
@@ -128,7 +128,6 @@ window.addEventListener('load',()=>{
       notification.textContent = '✅ ' + window._creditTexts.paymentSuccess;
       document.body.appendChild(notification);
       
-      // Remover después de 4 segundos
       setTimeout(() => {
         notification.style.animation = 'slideOut 0.3s ease-out';
         setTimeout(() => notification.remove(), 300);
@@ -137,7 +136,6 @@ window.addEventListener('load',()=>{
   }
 });
 
-// Agregar animaciones CSS si no existen
 if(!document.querySelector('style[data-credits-animations]')){
   const style = document.createElement('style');
   style.setAttribute('data-credits-animations', 'true');
