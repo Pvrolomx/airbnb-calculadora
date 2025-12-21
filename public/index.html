@@ -1006,7 +1006,8 @@
     formEl.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const payload = buildInputFromForm();
+      let payload = buildInputFromForm();
+      payload = convertFormToMXN(payload);
       if (btnCalcular) btnCalcular.disabled = true;
       appendLog("Enviando cálculo al backend…");
 
@@ -1084,7 +1085,8 @@
   if (btnComprarReporte) {
     btnComprarReporte.addEventListener("click", async () => {
       try {
-        const payload = buildInputFromForm();
+        let payload = buildInputFromForm();
+      payload = convertFormToMXN(payload);
 
         const resp = await fetch("/crear-sesion-reporte", {
           method: "POST",
