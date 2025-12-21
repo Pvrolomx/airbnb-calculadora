@@ -272,7 +272,7 @@ app.post("/crear-checkout", async (req, res) => {
         {
           price_data: {
             currency: "mxn",
-            unit_amount: 9900, // 99.00 MXN en centavos
+            unit_amount: 1000, // 10.00 MXN en centavos
             product_data: {
               name: "Reporte PDF de reserva Airbnb (estimación informativa)",
               description:
@@ -313,7 +313,7 @@ app.post("/crear-sesion-reporte", async (_req, res) => {
         {
           price_data: {
             currency: "mxn",
-            unit_amount: 9900, // MX$99.00 en centavos
+            unit_amount: 1000, // MX$10.00 en centavos
             product_data: {
               name: "Reporte PDF de estimación de reserva",
             },

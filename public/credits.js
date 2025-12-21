@@ -110,7 +110,46 @@ window.addEventListener('load',()=>{
     addCredits(10);
     window.history.replaceState({},document.title,'/');
     if(window._creditTexts){
-      alert(window._creditTexts.paymentSuccess);
+      // Mostrar notificación amigable en vez de alert
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        padding: 16px 24px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+        z-index: 10000;
+        font-weight: 600;
+        animation: slideIn 0.3s ease-out;
+      `;
+      notification.textContent = '✅ ' + window._creditTexts.paymentSuccess;
+      document.body.appendChild(notification);
+      
+      // Remover después de 4 segundos
+      setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease-out';
+        setTimeout(() => notification.remove(), 300);
+      }, 4000);
     }
   }
 });
+
+// Agregar animaciones CSS si no existen
+if(!document.querySelector('style[data-credits-animations]')){
+  const style = document.createElement('style');
+  style.setAttribute('data-credits-animations', 'true');
+  style.textContent = `
+    @keyframes slideIn {
+      from { transform: translateX(400px); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOut {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(400px); opacity: 0; }
+    }
+  `;
+  document.head.appendChild(style);
+}

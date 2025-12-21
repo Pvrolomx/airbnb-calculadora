@@ -278,12 +278,14 @@
         font-size: 12px;
         color: #e5e7eb;
         cursor: pointer;
-        transition: all 0.15s ease;
-        background: #020617;
+        transition: all 0.2s ease;
+        background: #1e293b;
       }
 
       .platform-pills label:hover {
         border-color: #22c55e;
+        background: #334155;
+        transform: scale(1.05);
       }
 
       .platform-pills input[type="radio"]:checked + label {
@@ -292,8 +294,19 @@
         color: #020617;
         font-weight: 600;
       }
-    </style>
-    <script src="/credits.js?v=1766257036"></script>
+    
+      /* Ocultar spinners en inputs numéricos */
+      input[type="number"]::-webkit-inner-spin-button,
+      input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+
+      input[type="number"] {
+        -moz-appearance: textfield;
+      }
+</style>
+    <script src="/credits.js?v=1766326246"></script>
   </head>
   <body>
     <div class="app-shell">
@@ -557,7 +570,6 @@
   <button
     id="btnComprarReporte"
     style="
-      display: none;
       width: 100%;
       padding: 10px 16px;
       border-radius: 999px;
@@ -567,10 +579,28 @@
       color: #ffffff;
       cursor: pointer;
       font-size: 16px;
+      margin-top: 12px;
     "
   >
     Comprar 10 cálculos — $10 MXN
+  </button>
 
+  <button
+    id="btnDescargarPDF"
+    style="
+      width: 100%;
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid #3b82f6;
+      background: transparent;
+      color: #3b82f6;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 8px;
+    "
+  >
+    📄 Download PDF Report
   </button>
 
 
@@ -581,6 +611,10 @@
             <strong style="color: #60a5fa;">Importante:</strong> Esta herramienta ofrece cálculos
             aproximados con fines informativos. No constituye asesoría fiscal,
             contable ni legal.
+            <br><br>
+            <strong style="color: #fbbf24;">Tasas fiscales:</strong> Los porcentajes de impuestos son estimaciones.
+            Actividad Empresarial usa 30% aproximado (la tabla real del ISR varía entre 1.92%-35%).
+            Consulte a un contador para cálculo exacto según su situación fiscal específica.
           </div>
         </section>
 
