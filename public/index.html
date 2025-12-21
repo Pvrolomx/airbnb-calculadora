@@ -294,6 +294,42 @@
         color: #020617;
         font-weight: 600;
       }
+
+      /* ======= CURRENCY TOGGLE (USD/MXN) ======= */
+      .currency-toggle {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+
+      .currency-toggle input[type="radio"] {
+        display: none;
+      }
+
+      .currency-toggle label {
+        padding: 8px 20px;
+        border-radius: 999px;
+        border: 1px solid #4b5563;
+        background: #1e293b;
+        color: #e5e7eb;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .currency-toggle label:hover {
+        border-color: #3b82f6;
+        background: #334155;
+        transform: scale(1.05);
+      }
+
+      .currency-toggle input:checked + label {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        border-color: #3b82f6;
+        color: white;
+        box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+      }
     
       /* Ocultar spinners en inputs numéricos */
       input[type="number"]::-webkit-inner-spin-button,
@@ -305,8 +341,43 @@
       input[type="number"] {
         -moz-appearance: textfield;
       }
+
+      /* Currency Toggle Styles */
+      .currency-toggle {
+        display: flex;
+        gap: 8px;
+      }
+
+      .currency-toggle input[type="radio"] {
+        display: none;
+      }
+
+      .currency-toggle label {
+        padding: 8px 24px;
+        border-radius: 999px;
+        border: 1px solid #4b5563;
+        background: #1e293b;
+        color: #e5e7eb;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .currency-toggle label:hover {
+        border-color: #3b82f6;
+        background: #334155;
+        transform: scale(1.05);
+      }
+
+      .currency-toggle input[type="radio"]:checked + label {
+        background: #3b82f6;
+        border-color: #3b82f6;
+        color: white;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+      }
 </style>
-    <script src="/credits.js?v=1766326246"></script>
+    <script src="/credits.js?v=1766327748"></script>
   </head>
   <body>
     <div class="app-shell">
@@ -983,11 +1054,11 @@
         netEl.classList.remove("positive", "negative");
 
         // Agregar equivalentes en USD
-        await addUsd(r.ingreso_bruto_reserva, "res-ingreso-bruto");
-        await addUsd(r.comision_airbnb_reserva, "res-comision");
-        await addUsd(r.gastos_reserva, "res-gastos");
-        await addUsd(r.impuestos_estimados_reserva, "res-impuestos");
-        await addUsd(r.ganancia_neta_reserva, "res-ganancia-neta");
+        await formatDual(r.ingreso_bruto_reserva, "res-ingreso-bruto");
+        await formatDual(r.comision_airbnb_reserva, "res-comision");
+        await formatDual(r.gastos_reserva, "res-gastos");
+        await formatDual(r.impuestos_estimados_reserva, "res-impuestos");
+        await formatDual(r.ganancia_neta_reserva, "res-ganancia-neta");
         netEl.classList.remove("positive", "negative");
         netEl.classList.add(
           r.ganancia_neta_reserva >= 0 ? "positive" : "negative"
