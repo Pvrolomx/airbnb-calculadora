@@ -2,8 +2,14 @@
 <html lang="es">
   <head>
     <meta charset="utf-8" />
-    <title>Calculadora de Reserva – Host Neto</title>
+    <title>Calculadora Airbnb México 2025 | Ganancia real por reserva</title>
+    <meta name="description" content="Calcula cuánto te queda realmente en Airbnb considerando comisiones, gastos e impuestos. Incluye regímenes fiscales en México (RESICO, Sin RFC). Tipo de cambio Banxico." />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="keywords" content="calculadora airbnb, ganancia airbnb mexico, comisiones airbnb, impuestos airbnb mexico, RESICO, host airbnb" />
+    <meta property="og:title" content="Calculadora Airbnb México 2025 | Ganancia real por reserva" />
+    <meta property="og:description" content="Calcula tu ganancia neta real por reserva. Comisiones, impuestos y tipo de cambio Banxico." />
+    <meta property="og:type" content="website" />
+    <link rel="canonical" href="https://airbnb-calculadora-vusx-2.vercel.app/" />
     <style>
       :root {
         color-scheme: dark;
@@ -12,8 +18,6 @@
       * {
         box-sizing: border-box;
       }
-
-      body {
         margin: 0;
         font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
           sans-serif;
@@ -116,6 +120,42 @@
         gap: 4px;
       }
 
+      .tooltip-icon {
+        display: inline-block;
+        width: 16px;
+        height: 16px;
+        background: #374151;
+        color: #9ca3af;
+        border-radius: 50%;
+        font-size: 11px;
+        text-align: center;
+        line-height: 16px;
+        margin-left: 6px;
+        cursor: help;
+        position: relative;
+      }
+      .tooltip-icon:hover {
+        background: #22c55e;
+        color: white;
+      }
+      .tooltip-icon:hover::after {
+        content: attr(data-tip);
+        position: absolute;
+        bottom: 24px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #1e293b;
+        color: #e5e7eb;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        white-space: nowrap;
+        max-width: 250px;
+        white-space: normal;
+        z-index: 100;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        border: 1px solid #374151;
+      }
       .input-label {
         font-size: 12px;
         color: #d1d5db;
@@ -742,13 +782,13 @@
       // Formulario principal
       formTitle: "Datos del hospedaje",
       labelPlatform: "¿Dónde se hizo la reserva?",
-      labelTarifaNoche: "Precio por noche que paga el huésped",
+      labelTarifaNoche: "Precio por noche que paga el huésped <span class=" tooltip-icon data-tip=Precio antes de comisiones e impuestos>?</span>",
       labelNoches: "Número de noches",
-      labelTarifaLimpieza: "Cargo de limpieza al huésped",
+      labelTarifaLimpieza: "Cargo de limpieza al huésped <span class=" tooltip-icon data-tip=Monto que el huésped paga por limpieza>?</span>",
       labelRegimen: "Régimen fiscal (aprox.)",
-      labelGastoLimpieza: "Lo que realmente pagas por limpieza",
-      labelGastoConsumibles: "Amenidades e insumos (café, jabón, etc.)",
-      labelGastoOtras: "Otros gastos de esta reserva",
+      labelGastoLimpieza: "Lo que realmente pagas por limpieza <span class=" tooltip-icon data-tip=Tu costo real de limpieza por reserva>?</span>",
+      labelGastoConsumibles: "Amenidades e insumos <span class=" tooltip-icon data-tip=Café jabón papel amenities por reserva>?</span>",
+      labelGastoOtras: "Otros gastos <span class=" tooltip-icon data-tip=Comisiones extra servicios mantenimiento>?</span>",
       btnCalcular: "Ver cuánto me queda",
 
       // Resultados
