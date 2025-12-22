@@ -1,3 +1,5 @@
+console.log('🔵 Dual Currency Script Loaded');
+
 // Dual Currency Logic
 let currentCurrency = 'USD';
 let fxRate = 20;
@@ -83,6 +85,7 @@ async function formatDual(mxnAmount, elementId) {
 
 // Event listeners
 window.addEventListener('DOMContentLoaded', () => {
+  console.log('🔵 DOMContentLoaded - Initializing dual currency');
   const currencyRadios = document.querySelectorAll('input[name="currency"]');
   currencyRadios.forEach(radio => {
     radio.addEventListener('change', (e) => {

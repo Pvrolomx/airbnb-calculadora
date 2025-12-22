@@ -278,14 +278,12 @@
         font-size: 12px;
         color: #e5e7eb;
         cursor: pointer;
-        transition: all 0.2s ease;
-        background: #1e293b;
+        transition: all 0.15s ease;
+        background: #020617;
       }
 
       .platform-pills label:hover {
         border-color: #22c55e;
-        background: #334155;
-        transform: scale(1.05);
       }
 
       .platform-pills input[type="radio"]:checked + label {
@@ -294,92 +292,7 @@
         color: #020617;
         font-weight: 600;
       }
-
-      /* ======= CURRENCY TOGGLE (USD/MXN) ======= */
-      .currency-toggle {
-        display: flex;
-        gap: 8px;
-        margin-bottom: 12px;
-      }
-
-      .currency-toggle input[type="radio"] {
-        display: none;
-      }
-
-      .currency-toggle label {
-        padding: 8px 20px;
-        border-radius: 999px;
-        border: 1px solid #4b5563;
-        background: #1e293b;
-        color: #e5e7eb;
-        cursor: pointer;
-        transition: all 0.2s;
-        font-weight: 600;
-        font-size: 14px;
-      }
-
-      .currency-toggle label:hover {
-        border-color: #3b82f6;
-        background: #334155;
-        transform: scale(1.05);
-      }
-
-      .currency-toggle input:checked + label {
-        background: linear-gradient(135deg, #3b82f6, #2563eb);
-        border-color: #3b82f6;
-        color: white;
-        box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
-      }
-    
-      /* Ocultar spinners en inputs numéricos */
-      input[type="number"]::-webkit-inner-spin-button,
-      input[type="number"]::-webkit-outer-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-      }
-
-      input[type="number"] {
-        -moz-appearance: textfield;
-      }
-
-      /* Currency Toggle Styles */
-      .currency-toggle {
-        display: flex;
-        gap: 8px;
-      }
-
-      .currency-toggle input[type="radio"] {
-        display: none;
-      }
-
-      .currency-toggle label {
-        padding: 8px 24px;
-        border-radius: 999px;
-        border: 1px solid #4b5563;
-        background: #1e293b;
-        color: #e5e7eb;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        font-weight: 600;
-        font-size: 14px;
-      }
-
-      .currency-toggle label:hover {
-        border-color: #3b82f6;
-        background: #334155;
-        transform: scale(1.05);
-      }
-
-      .currency-toggle input[type="radio"]:checked + label {
-        background: #3b82f6;
-        border-color: #3b82f6;
-        color: white;
-        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-      }
-</style>
-    <script src="/credits.js?v=1734800000"></script>
-    <script src="/dual-currency.js?v=1766329419"></script>
-    <script src=" https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js></script>
+    </style>
   </head>
   <body>
     <div class="app-shell">
@@ -391,13 +304,7 @@
           <div id="app-subtitle" class="app-subtitle">
             Ingresa los datos de una reserva y descubre cuánto te queda después de comisiones y gastos.
           </div>
-          <div id="credit-counter" style="margin-top:16px;padding:8px 16px;background:#10b981;color:white;border-radius:8px;font-size:14px;font-weight:700;text-align:center;display:inline-block;">
-            ⚡ 10 cálculos restantes
-          </div>
         </div>
-          <button onclick="localStorage.clear();location.reload();" style="margin-left:10px;padding:6px 12px;background:#6366f1;color:white;border:none;border-radius:6px;cursor:pointer;font-size:12px;">
-            🔄 Reset
-          </button>
         <button id="lang-toggle" class="lang-toggle" type="button">
           <span class="flag">🇲🇽</span>
           <span id="lang-toggle-text">ES</span>
@@ -412,14 +319,6 @@
           </div>
 
           <form id="calc-form">
-            <!-- CURRENCY TOGGLE -->
-            <div class="currency-toggle" style="margin-bottom: 16px;">
-              <input type="radio" name="currency" id="curr-usd" value="USD" checked>
-              <label for="curr-usd">💵 USD</label>
-              <input type="radio" name="currency" id="curr-mxn" value="MXN">
-              <label for="curr-mxn">🇲🇽 MXN</label>
-            </div>
-
             <!-- PLATAFORMA -->
             <div class="platform-group">
               <span id="label-platform" class="platform-label">
@@ -659,43 +558,29 @@
       background-color: #22c55e;
       color: #ffffff;
       cursor: pointer;
-      font-size: 16px;
-      margin-top: 12px;
     "
   >
     Comprar 10 cálculos — $10 MXN
+
   </button>
 
-  <button
-    id="btnDescargarPDF"
+  <p
+    id="pdf-stripe-note"
     style="
-      width: 100%;
-      padding: 10px 16px;
-      border-radius: 999px;
-      border: 1px solid #3b82f6;
-      background: transparent;
-      color: #3b82f6;
-      font-weight: 600;
-      cursor: pointer;
-      font-size: 16px;
-      margin-top: 8px;
+      margin: 8px 0 0 0;
+      font-size: 0.8rem;
+      color: #6b7280;
     "
   >
-    📄 Download PDF Report
-  </button>
-
-
+    Cada cálculo genera un reporte descargable en PDF. Pago procesado con Stripe. Herramienta informativa, no sustituye asesoría contable.
+  </p>
 </div>
 <!-- Fin bloque reporte PDF -->
 
-          <div class="disclaimer" id="disclaimer-text" style="margin-top: 24px; padding: 16px; background: #1f2937; border-left: 4px solid #3b82f6; border-radius: 8px; font-size: 14px; line-height: 1.6;">
-            <strong style="color: #60a5fa;">Importante:</strong> Esta herramienta ofrece cálculos
+          <div class="disclaimer" id="disclaimer-text">
+            <strong>Importante:</strong> Esta herramienta ofrece cálculos
             aproximados con fines informativos. No constituye asesoría fiscal,
             contable ni legal.
-            <br><br>
-            <strong style="color: #fbbf24;">Tasas fiscales:</strong> Los porcentajes de impuestos son estimaciones.
-            Actividad Empresarial usa 30% aproximado (la tabla real del ISR varía entre 1.92%-35%).
-            Consulte a un contador para cálculo exacto según su situación fiscal específica.
           </div>
         </section>
 
@@ -723,6 +608,15 @@
               • Otra: 0% (puedes ajustar en backend)
             </div>
 
+            <div>
+              <div
+                style="font-size: 12px; color: #9ca3af; margin-bottom: 4px"
+                id="side-log-title"
+              >
+                Log de cálculo (últimas ejecuciones)
+              </div>
+              <div id="log-panel" class="log-panel"></div>
+            </div>
           </div>
         </aside>
       </main>
@@ -940,17 +834,12 @@
   if (langToggle) {
     langToggle.addEventListener("click", () => {
       currentLang = currentLang === "es" ? "en" : "es";
-      localStorage.setItem("lang", currentLang);
       applyLang(currentLang);
-      // Trigger update en credits.js
-      if(window.updateDisplay) window.updateDisplay();
     });
   }
 
-  // Cargar idioma guardado o defaultear a ES
-  const savedLang = localStorage.getItem("lang") || "es";
-  currentLang = savedLang;
-  applyLang(savedLang);
+  // Primer render en ES
+  applyLang("es");
 
   // ========= Lógica de cálculo / API =========
 
@@ -1015,17 +904,12 @@
     formEl.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      let payload = buildInputFromForm();
-      payload = convertFormToMXN(payload);
+      const payload = buildInputFromForm();
       if (btnCalcular) btnCalcular.disabled = true;
       appendLog("Enviando cálculo al backend…");
 
       try {
-        if (!useCredit()) {
-        return;
-      }
-
-      const res = await fetch("/calcular", {
+        const res = await fetch("/calcular", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
@@ -1065,11 +949,11 @@
         netEl.classList.remove("positive", "negative");
 
         // Agregar equivalentes en USD
-        await formatDual(r.ingreso_bruto_reserva, "res-ingreso-bruto");
-        await formatDual(r.comision_airbnb_reserva, "res-comision");
-        await formatDual(r.gastos_reserva, "res-gastos");
-        await formatDual(r.impuestos_estimados_reserva, "res-impuestos");
-        await formatDual(r.ganancia_neta_reserva, "res-ganancia-neta");
+        await addUsd(r.ingreso_bruto_reserva, "res-ingreso-bruto");
+        await addUsd(r.comision_airbnb_reserva, "res-comision");
+        await addUsd(r.gastos_reserva, "res-gastos");
+        await addUsd(r.impuestos_estimados_reserva, "res-impuestos");
+        await addUsd(r.ganancia_neta_reserva, "res-ganancia-neta");
         netEl.classList.remove("positive", "negative");
         netEl.classList.add(
           r.ganancia_neta_reserva >= 0 ? "positive" : "negative"
@@ -1094,8 +978,7 @@
   if (btnComprarReporte) {
     btnComprarReporte.addEventListener("click", async () => {
       try {
-        let payload = buildInputFromForm();
-      payload = convertFormToMXN(payload);
+        const payload = buildInputFromForm();
 
         const resp = await fetch("/crear-sesion-reporte", {
           method: "POST",
@@ -1123,6 +1006,5 @@
     });
   }
 </script>
-    <script src=" pdf-generator.js></script>
 </body>
 </html>
