@@ -2,13 +2,17 @@
 <html lang="es">
   <head>
     <meta charset="utf-8" />
-    <title>Calculadora Airbnb México 2025 - Ganancia real por reserva</title>\n    <meta name=" description content=Calcula cuánto te queda realmente en Airbnb considerando comisiones gastos e impuestos. Regímenes fiscales México.>
+    <title>Calculadora Airbnb Mexico 2025 - Ganancia real por reserva</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Calcula cuanto te queda en Airbnb considerando comisiones, gastos e impuestos. Regimenes fiscales Mexico.">
     <style>
       :root {
-      .tooltip-icon{display:inline-block;width:16px;height:16px;background:#374151;color:#9ca3af;border-radius:50%;font-size:11px;text-align:center;line-height:16px;margin-left:6px;cursor:help;position:relative}.tooltip-icon:hover{background:#22c55e;color:#fff}.tooltip-icon:hover::after{content:attr(data-tip);position:absolute;bottom:24px;left:50%;transform:translateX(-50%);background:#1e293b;color:#e5e7eb;padding:8px 12px;border-radius:6px;font-size:12px;max-width:220px;white-space:normal;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.3);border:1px solid #374151}
         color-scheme: dark;
       }
+      .tooltip-icon{display:inline-block;width:16px;height:16px;background:#374151;color:#9ca3af;border-radius:50%;font-size:11px;text-align:center;line-height:16px;margin-left:6px;cursor:help;position:relative}
+      .tooltip-icon:hover{background:#22c55e;color:#fff}
+      .tooltip-icon:hover::after{content:attr(data-tip);position:absolute;bottom:24px;left:50%;transform:translateX(-50%);background:#1e293b;color:#e5e7eb;padding:8px 12px;border-radius:6px;font-size:12px;max-width:220px;white-space:normal;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.3);border:1px solid #374151}
+
 
       * {
         box-sizing: border-box;
@@ -465,7 +469,7 @@
 
             <div class="input-grid">
               <div class="input-group">
-                <label class="input-label" id="label-tarifa-noche" for="tarifa_noche">
+                <label class="input-label" id="label-tarifa-noche" for="tarifa_noche"><span class="tooltip-icon" data-tip="Precio antes de comisiones">?</span> 
                   Tarifa por noche
                 </label>
                 <input
@@ -493,7 +497,7 @@
               </div>
 
               <div class="input-group">
-                <label class="input-label" id="label-tarifa-limpieza" for="tarifa_limpieza">
+                <label class="input-label" id="label-tarifa-limpieza" for="tarifa_limpieza"><span class="tooltip-icon" data-tip="Cargo al huesped por limpieza">?</span> 
                   Tarifa de limpieza cobrada
                 </label>
                 <input
@@ -507,7 +511,7 @@
               </div>
 
               <div class="input-group">
-                <label class="input-label" id="label-regimen" for="regimen_fiscal">
+                <label class="input-label" id="label-regimen" for="regimen_fiscal"><span class="tooltip-icon" data-tip="Define como se estiman impuestos">?</span> 
                   Régimen fiscal (aprox.)
                 </label>
                 <select id="regimen_fiscal" class="input-field">
@@ -518,7 +522,7 @@
               </div>
 
               <div class="input-group">
-                <label class="input-label" id="label-gasto-limpieza" for="gasto_limpieza_real">
+                <label class="input-label" id="label-gasto-limpieza" for="gasto_limpieza_real"><span class="tooltip-icon" data-tip="Tu costo real de limpieza">?</span> 
                   Gasto real de limpieza
                 </label>
                 <input
@@ -532,7 +536,7 @@
               </div>
 
               <div class="input-group">
-                <label class="input-label" id="label-gasto-consumibles" for="gasto_consumibles">
+                <label class="input-label" id="label-gasto-consumibles" for="gasto_consumibles"><span class="tooltip-icon" data-tip="Cafe, jabon, amenities">?</span> 
                   Gasto en consumibles
                 </label>
                 <input
@@ -546,7 +550,7 @@
               </div>
 
               <div class="input-group">
-                <label class="input-label" id="label-gasto-otras" for="gasto_comisiones_otras">
+                <label class="input-label" id="label-gasto-otras" for="gasto_comisiones_otras"><span class="tooltip-icon" data-tip="Comisiones extra, mantenimiento">?</span> 
                   Otras comisiones / gastos
                 </label>
                 <input
