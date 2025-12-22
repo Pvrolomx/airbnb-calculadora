@@ -391,14 +391,6 @@
             ⚡ 10 cálculos restantes
           </div>
         </div>
-        <div style="display:flex;gap:8px;align-items:center;flex-shrink:0;">
-          <button onclick="localStorage.clear();location.reload();" style="padding:6px 12px;background:#64748b;color:white;border:none;border-radius:6px;cursor:pointer;font-size:12px;white-space:nowrap;">🔄 Reset</button>
-          <button id="lang-toggle" class="lang-toggle" type="button">
-            <span class="flag">🇲🇽</span>
-            <span id="lang-toggle-text">ES</span>
-          </button>
-        </div>
-      </header>
 
       <main class="app-body">
         <!-- COLUMNA IZQUIERDA: FORM -->
@@ -554,12 +546,13 @@
               </div>
             </div>
 
-            <div class="actions-row">
+
+            <div class="actions-row" style="display:flex;gap:10px;align-items:center;">
               <button id="btn-calcular" class="btn-primary" type="submit">
                 <span id="btn-calcular-text">Calcular estimado</span>
               </button>
+              <button type="button" onclick="localStorage.clear();location.reload();" style="padding:10px 16px;background:#64748b;color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;">🔄 Reset</button>
             </div>
-          </form>
 
           <div id="results" class="result-row" style="display: none">
             <div class="result-item">
