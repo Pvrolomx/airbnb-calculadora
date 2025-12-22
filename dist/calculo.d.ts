@@ -8,7 +8,7 @@
  * - Esta función NO constituye asesoría fiscal, contable ni legal.
  *   Consulte siempre a un Contador Público Certificado para decisiones reales.
  */
-export type Plataforma = "AIRBNB" | "VRBO" | "BOOKING" | "OTRA";
+export type Plataforma = "AIRBNB" | "AIRBNB_SIMPLIFIED" | "VRBO" | "BOOKING" | "OTRA";
 export interface CalculoInput {
     tarifa_noche: number;
     noches: number;
