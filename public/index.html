@@ -308,28 +308,25 @@
       .currency-toggle label {
         padding: 8px 20px;
         border-radius: 999px;
-        border: 1px solid #4b5563;
-        background: #1e293b;
-        color: #e5e7eb;
+        background: #22c55e;
+        border: 1px solid #22c55e;
+        color: white;
         cursor: pointer;
         transition: all 0.2s;
         font-weight: 600;
         font-size: 14px;
+        opacity: 0.3;
       }
 
       .currency-toggle label:hover {
-        border-color: #3b82f6;
-        background: #334155;
+        opacity: 0.6;
         transform: scale(1.05);
       }
 
       .currency-toggle input:checked + label {
-        background: linear-gradient(135deg, #3b82f6, #2563eb);
-        border-color: #3b82f6;
-        color: white;
-        box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+        opacity: 1;
+        box-shadow: 0 0 10px rgba(34,197,94,0.5);
       }
-    
       /* Ocultar spinners en inputs numéricos */
       input[type="number"]::-webkit-inner-spin-button,
       input[type="number"]::-webkit-outer-spin-button {
@@ -414,7 +411,7 @@
             <!-- CURRENCY TOGGLE -->
             <div class="currency-toggle" style="margin-bottom: 16px;">
               <input type="radio" name="currency" id="curr-usd" value="USD" checked>
-              <label for="curr-usd">💵 USD</label>
+              <label for="curr-usd">🇺🇸 USD</label>
               <input type="radio" name="currency" id="curr-mxn" value="MXN">
               <label for="curr-mxn">🇲🇽 MXN</label>
             </div>
