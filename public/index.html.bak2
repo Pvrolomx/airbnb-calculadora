@@ -391,13 +391,13 @@
             ⚡ 10 cálculos restantes
           </div>
         </div>
-        <div style="display:flex;gap:8px;align-items:center;flex-shrink:0;">
-          <button onclick="localStorage.clear();location.reload();" style="padding:6px 12px;background:#64748b;color:white;border:none;border-radius:6px;cursor:pointer;font-size:12px;white-space:nowrap;">🔄 Reset</button>
-          <button id="lang-toggle" class="lang-toggle" type="button">
-            <span class="flag">🇲🇽</span>
-            <span id="lang-toggle-text">ES</span>
+          <button onclick="localStorage.clear();location.reload();" style="margin-left:10px;padding:6px 12px;background:#6366f1;color:white;border:none;border-radius:6px;cursor:pointer;font-size:12px;">
+            🔄 Reset
           </button>
-        </div>
+        <button id="lang-toggle" class="lang-toggle" type="button">
+          <span class="flag">🇲🇽</span>
+          <span id="lang-toggle-text">ES</span>
+        </button>
       </header>
 
       <main class="app-body">
