@@ -738,6 +738,50 @@
     </div>
 
 <script>
+  // ========= CLIENT-SIDE CALCULATION =========
+  const COMISIONES_PLATAFORMA = {
+    AIRBNB: 0.03,
+    AIRBNB_SIMPLIFIED: 0.155,
+    VRBO: 0.08,
+    BOOKING: 0.15,
+    OTRA: 0.03
+  };
+
+  function calcularReservaLocal(input) {
+    const {
+      tarifa_noche, noches, tarifa_limpieza, regimen_fiscal,
+      gasto_limpieza_real, gasto_consumibles, gasto_comisiones_otras, plataforma
+    } = input;
+
+    const tasa_comision = COMISIONES_PLATAFORMA[plataforma] || 0.03;
+    const ingreso_bruto_reserva = (tarifa_noche * noches) + tarifa_limpieza;
+    const comision_airbnb_reserva = ingreso_bruto_reserva * tasa_comision;
+    const ingreso_neto_airbnb = ingreso_bruto_reserva - comision_airbnb_reserva;
+    const gastos_reserva = gasto_limpieza_real + gasto_consumibles + gasto_comisiones_otras;
+
+    let tasa_impuesto = 0;
+    if (regimen_fiscal === "NO_RFC") tasa_impuesto = 0.25;
+    if (regimen_fiscal === "RESICO") tasa_impuesto = 0.025;
+    if (regimen_fiscal === "ACTIVIDAD_EMPRESARIAL") tasa_impuesto = 0.3;
+
+    let base_impuestos = ingreso_neto_airbnb - gastos_reserva;
+    if (base_impuestos < 0) base_impuestos = 0;
+
+    const impuestos_estimados_reserva = Math.round(base_impuestos * tasa_impuesto * 100) / 100;
+    const ganancia_neta_reserva = Math.round((ingreso_neto_airbnb - gastos_reserva - impuestos_estimados_reserva) * 100) / 100;
+
+    return {
+      ingreso_bruto_reserva: Math.round(ingreso_bruto_reserva * 100) / 100,
+      comision_airbnb_reserva: Math.round(comision_airbnb_reserva * 100) / 100,
+      ingreso_neto_airbnb: Math.round(ingreso_neto_airbnb * 100) / 100,
+      gastos_reserva: Math.round(gastos_reserva * 100) / 100,
+      base_impuestos: Math.round(base_impuestos * 100) / 100,
+      impuestos_estimados_reserva,
+      ganancia_neta_reserva
+    };
+  }
+  // ========= END CLIENT-SIDE CALCULATION =========
+
   // ========= Textos ES / EN =========
   const texts = {
     es: {
@@ -1027,34 +1071,21 @@
       let payload = buildInputFromForm();
       payload = convertFormToMXN(payload);
       if (btnCalcular) btnCalcular.disabled = true;
-      appendLog("Enviando cálculo al backend…");
+      appendLog("Calculando...");
 
       try {
         if (!useCredit()) {
         return;
       }
 
-      const res = await fetch("/calcular", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
+      // Validate inputs
+      if (!payload.tarifa_noche || payload.tarifa_noche <= 0 || !payload.noches || payload.noches < 1) {
+        alert("Por favor ingresa la tarifa por noche y número de noches.");
+        return;
+      }
 
-        if (!res.ok) {
-          const err = await res.json().catch(() => ({}));
-          appendLog(
-            `Error HTTP ${res.status}: ${err.error || "Error desconocido"}`
-          );
-          alert(
-            err.error ||
-              "Ocurrió un error al calcular. Revisa los datos ingresados."
-          );
-          return;
-        }
-
-        const data = await res.json();
-        appendLog("Cálculo exitoso.");
-        const r = data.resultado;
+      const r = calcularReservaLocal(payload);
+      appendLog("Cálculo exitoso.");
         document.getElementById("res-ingreso-bruto").textContent =
           r.ingreso_bruto_reserva.toFixed(2) + " MXN";
         document.getElementById("res-comision").textContent =
