@@ -1119,10 +1119,8 @@
         document.getElementById("results").style.display = "grid";
       } catch (err) {
         console.error(err);
-        appendLog("Error de red o JS en el navegador.");
-        alert(
-          "No se pudo contactar al backend. Asegúrate de que el servidor esté corriendo."
-        );
+        appendLog("Error en el cálculo: " + err.message);
+        alert("Error en el cálculo. Revisa los datos ingresados.");
       } finally {
         if (btnCalcular) btnCalcular.disabled = false;
       }
