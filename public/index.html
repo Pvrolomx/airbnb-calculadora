@@ -1073,19 +1073,20 @@
       if (btnCalcular) btnCalcular.disabled = true;
       appendLog("Calculando...");
 
-      try {
-        if (!useCredit()) {
-        return;
-      }
-
-      // Validate inputs
+      // Validate inputs FIRST (before using credit)
       if (!payload.tarifa_noche || payload.tarifa_noche <= 0 || !payload.noches || payload.noches < 1) {
         alert("Por favor ingresa la tarifa por noche y número de noches.");
+        if (btnCalcular) btnCalcular.disabled = false;
         return;
       }
 
-      const r = calcularReservaLocal(payload);
-      appendLog("Cálculo exitoso.");
+      try {
+        if (!useCredit()) {
+          return;
+        }
+
+        const r = calcularReservaLocal(payload);
+        appendLog("Cálculo exitoso.");
         document.getElementById("res-ingreso-bruto").textContent =
           r.ingreso_bruto_reserva.toFixed(2) + " MXN";
         document.getElementById("res-comision").textContent =
