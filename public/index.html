@@ -571,7 +571,7 @@
               <button id="btn-calcular" class="btn-primary" type="submit">
                 <span id="btn-calcular-text">Calcular estimado</span>
               </button>
-              <button type="button" onclick="localStorage.clear();location.reload();" style="padding:10px 16px;background:#64748b;color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;">🔄 <span id=btn-reset-text>Reset</span></button>
+              <button id="btn-reset" type="button" onclick="localStorage.clear();location.reload();" style="padding:10px 16px;background:#64748b;color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;">🔄 <span id="btn-reset-text">Reset</span></button>
             </div>
 
           <div id="results" class="result-row" style="display: none">
@@ -822,7 +822,7 @@
       pdfStripeNote:
         "Cada cálculo genera un reporte descargable en PDF. Pago procesado con Stripe. Herramienta informativa, no sustituye asesoría contable.",
       
-      btnReset: " Reiniciar,
+      btnReset: "Reiniciar",
       // Panel derecho
       sideTitle: "Qué hace esta herramienta",
       sideHighlightHtml:
@@ -884,8 +884,8 @@
       pdfStripeNote:
         "Each calculation includes a downloadable PDF report. Payments are processed via Stripe. This is an informational tool and does not replace accounting advice.",
 
- btnReset: Reset,
       // Right panel
+      btnReset: "Reset",
       sideTitle: "What this tool does",
       sideHighlightHtml:
         "For a single booking, it estimates:<br />" +
@@ -956,6 +956,7 @@
     setText("pdf-section-description", t.pdfSectionDescription);
     setText("btnComprarReporte", t.pdfButton);
     setText("pdf-stripe-note", t.pdfStripeNote);
+    setText("btn-reset-text", t.btnReset);
 
     // Panel derecho
     setText("side-title", t.sideTitle);
