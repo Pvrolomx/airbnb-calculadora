@@ -1134,34 +1134,9 @@
   const btnComprarReporte = document.getElementById("btnComprarReporte");
 
   if (btnComprarReporte) {
-    btnComprarReporte.addEventListener("click", async () => {
-      try {
-        let payload = buildInputFromForm();
-      payload = convertFormToMXN(payload);
-
-        const resp = await fetch("/api/crear-sesion", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-
-        const data = await resp.json();
-
-        if (!data.ok || !data.url) {
-          alert(
-            data.error ||
-              "No se pudo iniciar el pago para el reporte PDF."
-          );
-          return;
-        }
-
-        window.location.href = data.url;
-      } catch (err) {
-        console.error("Error al crear sesión de Stripe:", err);
-        alert(
-          "Hubo un problema al iniciar el pago. Intenta de nuevo en unos momentos."
-        );
-      }
+    btnComprarReporte.addEventListener("click", () => {
+      // Stripe Payment Link directo - $10 MXN por 10 cálculos
+      window.location.href = "https://buy.stripe.com/test_dRmaEZdak0Rg4Kv3oi3VC00";
     });
   }
 </script>
