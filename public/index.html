@@ -6,6 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Calcula cuanto te queda en plataformas de hospedaje considerando comisiones, gastos e impuestos. Regimenes fiscales Mexico.">
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="apple-touch-icon" href="/icon-192.png">
+    <meta name="theme-color" content="#10b981">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Hospedaje">
     <meta property="og:image" content="https://airbnb-calculadora-vusx-2.vercel.app/og-image.svg">
     <style>
       :root {
@@ -1141,5 +1147,14 @@
   }
 </script>
     <script src="pdf-generator.js"></script>
+<script>
+if("serviceWorker" in navigator){
+  window.addEventListener("load",function(){
+    navigator.serviceWorker.register("/sw.js").then(function(r){
+      console.log("SW registrado",r.scope);
+    }).catch(function(e){console.log("SW error",e);});
+  });
+}
+</script>
 </body>
 </html>
