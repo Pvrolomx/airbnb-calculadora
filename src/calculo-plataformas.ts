@@ -3,6 +3,13 @@
 import { calcularReservaAirbnb, CalculoInput, CalculoOutput } from "./calculo";
 import { COMISIONES_POR_PLATAFORMA, Plataforma } from "./plataformas";
 
+// Tasas de impuesto por régimen fiscal
+const TASAS_IMPUESTO: Record<CalculoInput["regimen_fiscal"], number> = {
+  SIN_RFC: 0.25,
+  RESICO: 0.025,
+  ACTIVIDAD_EMPRESARIAL: 0.30,
+};
+
 export interface CalculoInputPlataforma extends CalculoInput {
   plataforma: Plataforma;
 }
@@ -13,7 +20,7 @@ export function calcularReservaPlataforma(
   plataforma: Plataforma;
   comision_plataforma: number;
 } {
-  const { plataforma } = input;
+  const { plataforma, regimen_fiscal } = input;
 
   // correr cálculo original Airbnb
   const base = calcularReservaAirbnb(input);
@@ -31,7 +38,9 @@ export function calcularReservaPlataforma(
   let base_impuestos = ingreso_neto - gastos;
   if (base_impuestos < 0) base_impuestos = 0;
 
-  const impuestos_estimados_reserva = Number((base_impuestos * 0.025).toFixed(2)); // mismo 2.5%
+  // FIX: Usar tasa según régimen fiscal (antes era hardcoded 0.025)
+  const tasa_impuesto = TASAS_IMPUESTO[regimen_fiscal] ?? 0.025;
+  const impuestos_estimados_reserva = Number((base_impuestos * tasa_impuesto).toFixed(2));
 
   const ganancia_neta_reserva = Number(
     (ingreso_neto - gastos - impuestos_estimados_reserva).toFixed(2)

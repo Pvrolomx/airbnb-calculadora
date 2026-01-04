@@ -18,7 +18,7 @@ const COMISIONES_PLATAFORMA: Record<Plataforma, number> = {
   AIRBNB_SIMPLIFIED: 0.155, // 15.5% host-only fee
   VRBO: 0.08,               // 8%
   BOOKING: 0.15,            // 15%
-  OTRA: 0.03,               // 3% por defecto
+  OTRA: 0.00,               // 0% reserva directa
 };
 
 export interface CalculoInput {
