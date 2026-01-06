@@ -644,6 +644,7 @@
 
 <!-- Bloque opcional de reporte PDF -->
 <div
+  id="pdf-block"
   style="
     margin-top: 16px;
     padding: 16px 20px;
@@ -683,6 +684,7 @@
 
   <button
     id="btnDescargarPDF"
+    onclick="generatePDF()"
     style="
       width: 100%;
       padding: 10px 16px;
@@ -694,9 +696,10 @@
       cursor: pointer;
       font-size: 16px;
       margin-top: 8px;
+      display: block;
     "
   >
-    📄 Download PDF Report
+    📄 <span id="btnDescargarPDF-text">Descargar PDF</span>
   </button>
 
 
@@ -1146,7 +1149,7 @@
     });
   }
 </script>
-    <script src="pdf-generator.js"></script>
+    <script src="pdf-generator.js?v=1736192000"></script>
 <script>
 if("serviceWorker" in navigator){
   window.addEventListener("load",function(){

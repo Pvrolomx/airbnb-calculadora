@@ -17,7 +17,8 @@ function updateDisplay(){
       btnNone:'Sin cálculos - Compra más',
       btnNormal:'Ver cuánto me queda',
       alert:'No tienes cálculos disponibles. Compra más para continuar.',
-      paymentSuccess:'¡Pago exitoso! +10 cálculos agregados a tu cuenta'
+      paymentSuccess:'¡Pago exitoso! +10 cálculos agregados a tu cuenta',
+      downloadPdf:'Descargar PDF'
     },
     en:{
       remaining:'⚡ '+c+' calculations remaining',
@@ -25,7 +26,8 @@ function updateDisplay(){
       btnNone:'No calculations - Buy more',
       btnNormal:'See my net earnings',
       alert:'You have no calculations available. Buy more to continue.',
-      paymentSuccess:'Payment successful! +10 calculations added to your account'
+      paymentSuccess:'Payment successful! +10 calculations added to your account',
+      downloadPdf:'Download PDF'
     }
   };
   
@@ -77,16 +79,17 @@ function updateDisplay(){
     }
   }
   
-  // Mostrar/ocultar botón de compra según créditos
+  // Mostrar/ocultar botón de compra según créditos (solo el de comprar)
   const buyButton=document.getElementById('btnComprarReporte');
-  const pdfBlock=document.getElementById('pdf-block');
   
   if(buyButton){
     buyButton.style.display=c<=0?'block':'none';
   }
   
-  if(pdfBlock){
-    pdfBlock.style.display=c<=0?'block':'none';
+  // Actualizar texto del botón de descargar PDF
+  const btnPdfText=document.getElementById('btnDescargarPDF-text');
+  if(btnPdfText){
+    btnPdfText.textContent=t.downloadPdf;
   }
   
   window._creditTexts=t;
