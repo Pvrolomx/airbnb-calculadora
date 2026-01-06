@@ -1,4 +1,4 @@
-// PDF Generator - Estilo Ledger profesional
+// PDF Generator - Estilo Ledger profesional (fix source type)
 async function generatePDF() {
   console.log('generatePDF called');
   
@@ -35,13 +35,12 @@ async function generatePDF() {
     
     // Detectar si ganancia es negativa
     const isNegative = gananciaNeta.includes('-');
-    const netaColor = isNegative ? '#dc2626' : '#059669';
     
     // Crear HTML estilo ledger
     const ledgerHTML = `
-      <div style="font-family: 'Segoe UI', Arial, sans-serif; padding: 30px; background: #ffffff; color: #1e293b;">
+      <div id="pdf-content" style="font-family: Arial, sans-serif; padding: 30px; background: #ffffff; color: #1e293b; width: 500px;">
         <h2 style="text-align: center; color: #1e40af; margin-bottom: 24px; font-size: 20px; border-bottom: 2px solid #1e40af; padding-bottom: 10px;">
-          📊 Cálculo de Hospedaje
+          Cálculo de Hospedaje
         </h2>
         <p style="text-align: center; color: #64748b; font-size: 12px; margin-bottom: 24px;">
           Generado: ${new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' })}
@@ -85,7 +84,11 @@ async function generatePDF() {
     tempDiv.innerHTML = ledgerHTML;
     tempDiv.style.position = 'absolute';
     tempDiv.style.left = '-9999px';
+    tempDiv.style.top = '0';
     document.body.appendChild(tempDiv);
+    
+    // Obtener el elemento hijo directamente
+    const pdfElement = tempDiv.querySelector('#pdf-content');
     
     const opt = {
       margin: 10,
@@ -99,7 +102,7 @@ async function generatePDF() {
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
-    await html2pdf().set(opt).from(tempDiv.firstChild).save();
+    await html2pdf().set(opt).from(pdfElement).save();
     console.log('PDF generated successfully');
     
     document.body.removeChild(tempDiv);
