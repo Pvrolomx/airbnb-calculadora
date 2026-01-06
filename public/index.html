@@ -605,6 +605,30 @@
               </div>
             </div>
 
+            <div class="result-item" id="retencion-iva-row" style="display:none;">
+              <div class="result-label" id="res-label-retencion-iva">
+                Retención IVA (8%)
+              </div>
+              <div
+                id="res-retencion-iva"
+                class="result-value"
+              >
+                —
+              </div>
+            </div>
+
+            <div class="result-item" id="retencion-isr-row" style="display:none;">
+              <div class="result-label" id="res-label-retencion-isr">
+                Retención ISR (4%)
+              </div>
+              <div
+                id="res-retencion-isr"
+                class="result-value"
+              >
+                —
+              </div>
+            </div>
+
             <div class="result-item">
               <div class="result-label" id="res-label-gastos">
                 Gastos directos reserva
@@ -762,26 +786,50 @@
       gasto_limpieza_real, gasto_consumibles, gasto_comisiones_otras, plataforma
     } = input;
 
+    const RETENCION_IVA = 0.08;  // 8% del bruto
+    const RETENCION_ISR = 0.04;  // 4% del bruto
+
     const tasa_comision = COMISIONES_PLATAFORMA[plataforma] || 0.03;
     const ingreso_bruto_reserva = (tarifa_noche * noches) + tarifa_limpieza;
     const comision_airbnb_reserva = ingreso_bruto_reserva * tasa_comision;
-    const ingreso_neto_airbnb = ingreso_bruto_reserva - comision_airbnb_reserva;
+    
+    // Retenciones (solo aplican con RFC y en Airbnb)
+    let retencion_iva = 0;
+    let retencion_isr = 0;
+    const esAirbnb = plataforma === "AIRBNB" || plataforma === "AIRBNB_SIMPLIFIED";
+    const tieneRFC = regimen_fiscal !== "NO_RFC";
+    
+    if (tieneRFC && esAirbnb) {
+      retencion_iva = ingreso_bruto_reserva * RETENCION_IVA;
+      retencion_isr = ingreso_bruto_reserva * RETENCION_ISR;
+    }
+    
+    const total_retenciones = comision_airbnb_reserva + retencion_iva + retencion_isr;
+    const ingreso_neto_airbnb = ingreso_bruto_reserva - total_retenciones;
     const gastos_reserva = gasto_limpieza_real + gasto_consumibles + gasto_comisiones_otras;
 
+    // Impuestos adicionales (la retención ISR es pago a cuenta)
     let tasa_impuesto = 0;
-    if (regimen_fiscal === "NO_RFC") tasa_impuesto = 0.25;
+    if (regimen_fiscal === "NO_RFC") tasa_impuesto = 0.20;
     if (regimen_fiscal === "RESICO") tasa_impuesto = 0.025;
-    if (regimen_fiscal === "ACTIVIDAD_EMPRESARIAL") tasa_impuesto = 0.3;
+    if (regimen_fiscal === "ACTIVIDAD_EMPRESARIAL") tasa_impuesto = 0.30;
 
-    let base_impuestos = ingreso_neto_airbnb - gastos_reserva;
+    let base_impuestos = ingreso_bruto_reserva - gastos_reserva;
     if (base_impuestos < 0) base_impuestos = 0;
 
-    const impuestos_estimados_reserva = Math.round(base_impuestos * tasa_impuesto * 100) / 100;
+    let impuesto_bruto = base_impuestos * tasa_impuesto;
+    let impuestos_estimados_reserva = impuesto_bruto - retencion_isr;
+    if (impuestos_estimados_reserva < 0) impuestos_estimados_reserva = 0;
+    impuestos_estimados_reserva = Math.round(impuestos_estimados_reserva * 100) / 100;
+
     const ganancia_neta_reserva = Math.round((ingreso_neto_airbnb - gastos_reserva - impuestos_estimados_reserva) * 100) / 100;
 
     return {
       ingreso_bruto_reserva: Math.round(ingreso_bruto_reserva * 100) / 100,
       comision_airbnb_reserva: Math.round(comision_airbnb_reserva * 100) / 100,
+      retencion_iva: Math.round(retencion_iva * 100) / 100,
+      retencion_isr: Math.round(retencion_isr * 100) / 100,
+      total_retenciones: Math.round(total_retenciones * 100) / 100,
       ingreso_neto_airbnb: Math.round(ingreso_neto_airbnb * 100) / 100,
       gastos_reserva: Math.round(gastos_reserva * 100) / 100,
       base_impuestos: Math.round(base_impuestos * 100) / 100,
@@ -1120,6 +1168,23 @@
         // Agregar equivalentes en USD
         await formatDual(r.ingreso_bruto_reserva, "res-ingreso-bruto");
         await formatDual(r.comision_airbnb_reserva, "res-comision");
+        
+        // Mostrar retenciones si aplican
+        const retencionIvaRow = document.getElementById("retencion-iva-row");
+        const retencionIsrRow = document.getElementById("retencion-isr-row");
+        if (r.retencion_iva > 0) {
+          retencionIvaRow.style.display = "block";
+          await formatDual(r.retencion_iva, "res-retencion-iva");
+        } else {
+          retencionIvaRow.style.display = "none";
+        }
+        if (r.retencion_isr > 0) {
+          retencionIsrRow.style.display = "block";
+          await formatDual(r.retencion_isr, "res-retencion-isr");
+        } else {
+          retencionIsrRow.style.display = "none";
+        }
+        
         await formatDual(r.gastos_reserva, "res-gastos");
         await formatDual(r.impuestos_estimados_reserva, "res-impuestos");
         await formatDual(r.ganancia_neta_reserva, "res-ganancia-neta");
@@ -1149,7 +1214,7 @@
     });
   }
 </script>
-    <script src="pdf-generator.js?v=1736194000"></script>
+    <script src="pdf-generator.js?v=1736195000"></script>
 <script>
 if("serviceWorker" in navigator){
   window.addEventListener("load",function(){

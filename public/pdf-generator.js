@@ -1,4 +1,4 @@
-// PDF Generator - Estilo Ledger profesional (fix source type)
+// PDF Generator - Estilo Ledger con retenciones
 async function generatePDF() {
   console.log('generatePDF called');
   
@@ -23,18 +23,41 @@ async function generatePDF() {
     // Obtener valores actuales
     const ingresoBruto = document.getElementById('res-ingreso-bruto')?.textContent || '—';
     const comision = document.getElementById('res-comision')?.textContent || '—';
+    const retencionIva = document.getElementById('res-retencion-iva')?.textContent || '';
+    const retencionIsr = document.getElementById('res-retencion-isr')?.textContent || '';
     const gastos = document.getElementById('res-gastos')?.textContent || '—';
     const impuestos = document.getElementById('res-impuestos')?.textContent || '—';
     const gananciaNeta = document.getElementById('res-ganancia-neta')?.textContent || '—';
     
-    const labelIngreso = document.getElementById('res-label-ingreso-bruto')?.textContent?.trim() || 'Ingreso bruto';
-    const labelComision = document.getElementById('res-label-comision')?.textContent?.trim() || 'Comisión plataforma';
-    const labelGastos = document.getElementById('res-label-gastos')?.textContent?.trim() || 'Gastos directos';
-    const labelImpuestos = document.getElementById('res-label-impuestos')?.textContent?.trim() || 'Impuestos';
-    const labelNeta = document.getElementById('res-label-ganancia-neta')?.textContent?.trim() || 'Ganancia neta';
+    // Verificar si hay retenciones visibles
+    const ivaVisible = document.getElementById('retencion-iva-row')?.style.display !== 'none';
+    const isrVisible = document.getElementById('retencion-isr-row')?.style.display !== 'none';
+    
+    const labelIngreso = 'Ingreso bruto (reserva)';
+    const labelComision = 'Comisión plataforma';
+    const labelGastos = 'Gastos directos';
+    const labelImpuestos = 'Impuestos adicionales';
+    const labelNeta = 'Ganancia neta estimada';
     
     // Detectar si ganancia es negativa
     const isNegative = gananciaNeta.includes('-');
+    
+    // Construir filas de retenciones si aplican
+    let retencionesHTML = '';
+    if (ivaVisible && retencionIva) {
+      retencionesHTML += `
+        <tr>
+          <td style="padding: 12px 16px; border: 1px solid #cbd5e1;">Retención IVA (8%)</td>
+          <td style="padding: 12px 16px; border: 1px solid #cbd5e1; text-align: right; color: #dc2626;">${retencionIva}</td>
+        </tr>`;
+    }
+    if (isrVisible && retencionIsr) {
+      retencionesHTML += `
+        <tr style="background: #f1f5f9;">
+          <td style="padding: 12px 16px; border: 1px solid #cbd5e1;">Retención ISR (4%)</td>
+          <td style="padding: 12px 16px; border: 1px solid #cbd5e1; text-align: right; color: #dc2626;">${retencionIsr}</td>
+        </tr>`;
+    }
     
     // Crear HTML estilo ledger
     const ledgerHTML = `
@@ -55,6 +78,7 @@ async function generatePDF() {
             <td style="padding: 12px 16px; border: 1px solid #cbd5e1;">${labelComision}</td>
             <td style="padding: 12px 16px; border: 1px solid #cbd5e1; text-align: right; color: #dc2626;">${comision}</td>
           </tr>
+          ${retencionesHTML}
           <tr style="background: #f1f5f9;">
             <td style="padding: 12px 16px; border: 1px solid #cbd5e1;">${labelGastos}</td>
             <td style="padding: 12px 16px; border: 1px solid #cbd5e1; text-align: right; color: #dc2626;">${gastos}</td>
@@ -70,7 +94,7 @@ async function generatePDF() {
         </table>
         
         <div style="margin-top: 24px; padding: 12px; background: #f8fafc; border-left: 4px solid #3b82f6; font-size: 11px; color: #64748b;">
-          <strong>Nota:</strong> Este cálculo es una estimación. Consulte a un contador para asesoría fiscal profesional.
+          <strong>Nota:</strong> Las retenciones de IVA (8%) e ISR (4%) son pagos a cuenta que Airbnb hace al SAT. Este cálculo es una estimación. Consulte a un contador para asesoría fiscal profesional.
         </div>
         
         <p style="text-align: center; margin-top: 20px; font-size: 10px; color: #94a3b8;">
@@ -87,7 +111,6 @@ async function generatePDF() {
     tempDiv.style.top = '0';
     document.body.appendChild(tempDiv);
     
-    // Obtener el elemento hijo directamente
     const pdfElement = tempDiv.querySelector('#pdf-content');
     
     const opt = {
