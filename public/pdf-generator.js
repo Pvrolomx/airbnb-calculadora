@@ -1,4 +1,4 @@
-// PDF Generator - Estilo Ledger con retenciones
+// PDF Generator - Estilo Ledger con retenciones e impuesto local
 async function generatePDF() {
   console.log('generatePDF called');
   
@@ -25,13 +25,15 @@ async function generatePDF() {
     const comision = document.getElementById('res-comision')?.textContent || '—';
     const retencionIva = document.getElementById('res-retencion-iva')?.textContent || '';
     const retencionIsr = document.getElementById('res-retencion-isr')?.textContent || '';
+    const impuestoLocal = document.getElementById('res-impuesto-local')?.textContent || '';
     const gastos = document.getElementById('res-gastos')?.textContent || '—';
     const impuestos = document.getElementById('res-impuestos')?.textContent || '—';
     const gananciaNeta = document.getElementById('res-ganancia-neta')?.textContent || '—';
     
-    // Verificar si hay retenciones visibles
+    // Verificar si hay items visibles
     const ivaVisible = document.getElementById('retencion-iva-row')?.style.display !== 'none';
     const isrVisible = document.getElementById('retencion-isr-row')?.style.display !== 'none';
+    const localVisible = document.getElementById('impuesto-local-row')?.style.display !== 'none';
     
     const labelIngreso = 'Ingreso bruto (reserva)';
     const labelComision = 'Comisión plataforma';
@@ -42,20 +44,27 @@ async function generatePDF() {
     // Detectar si ganancia es negativa
     const isNegative = gananciaNeta.includes('-');
     
-    // Construir filas de retenciones si aplican
-    let retencionesHTML = '';
+    // Construir filas adicionales
+    let rowsAdicionales = '';
     if (ivaVisible && retencionIva) {
-      retencionesHTML += `
+      rowsAdicionales += `
         <tr>
           <td style="padding: 12px 16px; border: 1px solid #cbd5e1;">Retención IVA (8%)</td>
           <td style="padding: 12px 16px; border: 1px solid #cbd5e1; text-align: right; color: #dc2626;">${retencionIva}</td>
         </tr>`;
     }
     if (isrVisible && retencionIsr) {
-      retencionesHTML += `
+      rowsAdicionales += `
         <tr style="background: #f1f5f9;">
           <td style="padding: 12px 16px; border: 1px solid #cbd5e1;">Retención ISR (4%)</td>
           <td style="padding: 12px 16px; border: 1px solid #cbd5e1; text-align: right; color: #dc2626;">${retencionIsr}</td>
+        </tr>`;
+    }
+    if (localVisible && impuestoLocal) {
+      rowsAdicionales += `
+        <tr>
+          <td style="padding: 12px 16px; border: 1px solid #cbd5e1;">Impuesto local hospedaje</td>
+          <td style="padding: 12px 16px; border: 1px solid #cbd5e1; text-align: right; color: #059669;">+${impuestoLocal}</td>
         </tr>`;
     }
     
@@ -78,7 +87,7 @@ async function generatePDF() {
             <td style="padding: 12px 16px; border: 1px solid #cbd5e1;">${labelComision}</td>
             <td style="padding: 12px 16px; border: 1px solid #cbd5e1; text-align: right; color: #dc2626;">${comision}</td>
           </tr>
-          ${retencionesHTML}
+          ${rowsAdicionales}
           <tr style="background: #f1f5f9;">
             <td style="padding: 12px 16px; border: 1px solid #cbd5e1;">${labelGastos}</td>
             <td style="padding: 12px 16px; border: 1px solid #cbd5e1; text-align: right; color: #dc2626;">${gastos}</td>
@@ -94,7 +103,7 @@ async function generatePDF() {
         </table>
         
         <div style="margin-top: 24px; padding: 12px; background: #f8fafc; border-left: 4px solid #3b82f6; font-size: 11px; color: #64748b;">
-          <strong>Nota:</strong> Las retenciones de IVA (8%) e ISR (4%) son pagos a cuenta que Airbnb hace al SAT. Este cálculo es una estimación. Consulte a un contador para asesoría fiscal profesional.
+          <strong>Nota:</strong> Las retenciones de IVA (8%) e ISR (4%) son pagos a cuenta que Airbnb hace al SAT. El impuesto local de hospedaje se transfiere al huésped y se suma a tu pago. Este cálculo es una estimación.
         </div>
         
         <p style="text-align: center; margin-top: 20px; font-size: 10px; color: #94a3b8;">

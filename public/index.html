@@ -530,6 +530,17 @@
               </div>
 
               <div class="input-group">
+                <label class="input-label" id="label-ubicacion" for="ubicacion_hospedaje"><span class="tooltip-icon" data-tip="Impuesto local de hospedaje">?</span> 
+                  Ubicación del hospedaje
+                </label>
+                <select id="ubicacion_hospedaje" class="input-field">
+                  <option id="opt-ubicacion-pv" value="PV" selected>Puerto Vallarta (3%)</option>
+                  <option id="opt-ubicacion-nayarit" value="NAYARIT">Nayarit / Bahía (5%)</option>
+                  <option id="opt-ubicacion-otro" value="OTRO">Otro (sin impuesto local)</option>
+                </select>
+              </div>
+
+              <div class="input-group">
                 <label class="input-label" id="label-gasto-limpieza" for="gasto_limpieza_real"><span class="tooltip-icon" data-tip="Tu costo real de limpieza">?</span> 
                   Gasto real de limpieza
                 </label>
@@ -624,6 +635,18 @@
               <div
                 id="res-retencion-isr"
                 class="result-value"
+              >
+                —
+              </div>
+            </div>
+
+            <div class="result-item" id="impuesto-local-row" style="display:none;">
+              <div class="result-label" id="res-label-impuesto-local">
+                Impuesto local hospedaje
+              </div>
+              <div
+                id="res-impuesto-local"
+                class="result-value positive"
               >
                 —
               </div>
@@ -783,15 +806,27 @@
   function calcularReservaLocal(input) {
     const {
       tarifa_noche, noches, tarifa_limpieza, regimen_fiscal,
-      gasto_limpieza_real, gasto_consumibles, gasto_comisiones_otras, plataforma
+      gasto_limpieza_real, gasto_consumibles, gasto_comisiones_otras, 
+      ubicacion_hospedaje, plataforma
     } = input;
 
     const RETENCION_IVA = 0.08;  // 8% del bruto
     const RETENCION_ISR = 0.04;  // 4% del bruto
+    
+    // Impuesto local por ubicación
+    const IMPUESTO_LOCAL = {
+      PV: 0.03,      // Puerto Vallarta 3%
+      NAYARIT: 0.05, // Nayarit/Bahía 5%
+      OTRO: 0        // Otros sin impuesto local
+    };
 
     const tasa_comision = COMISIONES_PLATAFORMA[plataforma] || 0.03;
     const ingreso_bruto_reserva = (tarifa_noche * noches) + tarifa_limpieza;
     const comision_airbnb_reserva = ingreso_bruto_reserva * tasa_comision;
+    
+    // Impuesto local hospedaje (se cobra al huésped pero lo recibes tú)
+    const tasa_local = IMPUESTO_LOCAL[ubicacion_hospedaje] || 0;
+    const impuesto_local = ingreso_bruto_reserva * tasa_local;
     
     // Retenciones (solo aplican con RFC y en Airbnb)
     let retencion_iva = 0;
@@ -805,7 +840,8 @@
     }
     
     const total_retenciones = comision_airbnb_reserva + retencion_iva + retencion_isr;
-    const ingreso_neto_airbnb = ingreso_bruto_reserva - total_retenciones;
+    // Impuesto local se suma porque lo recibes (pass-through)
+    const ingreso_neto_airbnb = ingreso_bruto_reserva - total_retenciones + impuesto_local;
     const gastos_reserva = gasto_limpieza_real + gasto_consumibles + gasto_comisiones_otras;
 
     // Impuestos adicionales (la retención ISR es pago a cuenta)
@@ -827,6 +863,7 @@
     return {
       ingreso_bruto_reserva: Math.round(ingreso_bruto_reserva * 100) / 100,
       comision_airbnb_reserva: Math.round(comision_airbnb_reserva * 100) / 100,
+      impuesto_local: Math.round(impuesto_local * 100) / 100,
       retencion_iva: Math.round(retencion_iva * 100) / 100,
       retencion_isr: Math.round(retencion_isr * 100) / 100,
       total_retenciones: Math.round(total_retenciones * 100) / 100,
@@ -1091,6 +1128,7 @@
       gasto_comisiones_otras: Number(
         document.getElementById("gasto_comisiones_otras").value || 0
       ),
+      ubicacion_hospedaje: document.getElementById("ubicacion_hospedaje").value || "PV",
       plataforma,
     };
   }
@@ -1185,6 +1223,15 @@
           retencionIsrRow.style.display = "none";
         }
         
+        // Mostrar impuesto local si aplica
+        const impuestoLocalRow = document.getElementById("impuesto-local-row");
+        if (r.impuesto_local > 0) {
+          impuestoLocalRow.style.display = "block";
+          await formatDual(r.impuesto_local, "res-impuesto-local");
+        } else {
+          impuestoLocalRow.style.display = "none";
+        }
+        
         await formatDual(r.gastos_reserva, "res-gastos");
         await formatDual(r.impuestos_estimados_reserva, "res-impuestos");
         await formatDual(r.ganancia_neta_reserva, "res-ganancia-neta");
@@ -1214,7 +1261,7 @@
     });
   }
 </script>
-    <script src="pdf-generator.js?v=1736195000"></script>
+    <script src="pdf-generator.js?v=1736200000"></script>
 <script>
 if("serviceWorker" in navigator){
   window.addEventListener("load",function(){
