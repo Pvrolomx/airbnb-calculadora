@@ -102,8 +102,8 @@ async function generatePDF() {
           </tr>
         </table>
         
-        <div style="margin-top: 24px; padding: 12px; background: #f8fafc; border-left: 4px solid #3b82f6; font-size: 11px; color: #64748b;">
-          <strong>Nota:</strong> Las retenciones de IVA (8%) e ISR (4%) son pagos a cuenta que Airbnb hace al SAT. El impuesto local de hospedaje se transfiere al huésped y se suma a tu pago. Este cálculo es una estimación.
+        <div style="margin-top: 24px; padding: 12px; background: #fef3c7; border-left: 4px solid #f59e0b; font-size: 11px; color: #92400e;">
+          <strong>⚠️ Aviso importante:</strong> Este documento es únicamente una <u>estimación informativa</u> y no constituye asesoría fiscal, contable ni legal. Los montos reales pueden variar. Consulta a un contador certificado para determinar tus obligaciones fiscales específicas.
         </div>
         
         <p style="text-align: center; margin-top: 20px; font-size: 10px; color: #94a3b8;">
