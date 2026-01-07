@@ -535,10 +535,46 @@
                   Ubicación del hospedaje
                 </label>
                 <select id="ubicacion_hospedaje" class="input-field">
-                  <option id="opt-ubicacion-pv" value="PV" selected>Puerto Vallarta (3%)</option>
-                  <option id="opt-ubicacion-nayarit" value="NAYARIT">Nayarit / Bahía (5%)</option>
-                  <option id="opt-ubicacion-otro" value="OTRO">Otro (sin impuesto local)</option>
+                  <optgroup label="📍 Con convenio Airbnb (no pagas ISH)">
+                    <option value="CDMX">Ciudad de México (5%)</option>
+                    <option value="JALISCO" selected>Jalisco / Pto Vallarta (3%)</option>
+                    <option value="QROO">Quintana Roo (4%)</option>
+                    <option value="YUCATAN">Yucatán (5%)</option>
+                    <option value="BCS">Baja California Sur (5%)</option>
+                    <option value="EDOMEX">Estado de México (3%)</option>
+                    <option value="OAXACA">Oaxaca (3%)</option>
+                    <option value="SINALOA">Sinaloa (3%)</option>
+                    <option value="SONORA">Sonora (2%)</option>
+                    <option value="CHIAPAS">Chiapas (2%)</option>
+                    <option value="PUEBLA">Puebla (3%)</option>
+                    <option value="GUERRERO">Guerrero (4%)</option>
+                  </optgroup>
+                  <optgroup label="⚠️ Sin convenio (tú pagas ISH)">
+                    <option value="NAYARIT">Nayarit (5%)</option>
+                    <option value="BC">Baja California (5%)</option>
+                    <option value="NL">Nuevo León (3%)</option>
+                    <option value="QUERETARO">Querétaro (2.5%)</option>
+                    <option value="MICHOACAN">Michoacán (3%)</option>
+                    <option value="COLIMA">Colima (2%)</option>
+                    <option value="AGUASCALIENTES">Aguascalientes (3%)</option>
+                    <option value="CAMPECHE">Campeche (2%)</option>
+                    <option value="COAHUILA">Coahuila (3%)</option>
+                    <option value="DURANGO">Durango (2%)</option>
+                    <option value="GUANAJUATO">Guanajuato (2%)</option>
+                    <option value="HIDALGO">Hidalgo (3%)</option>
+                    <option value="MORELOS">Morelos (2%)</option>
+                    <option value="SLP">San Luis Potosí (1.5%)</option>
+                    <option value="TABASCO">Tabasco (2%)</option>
+                    <option value="TAMAULIPAS">Tamaulipas (2%)</option>
+                    <option value="TLAXCALA">Tlaxcala (2%)</option>
+                    <option value="VERACRUZ">Veracruz (2%)</option>
+                    <option value="ZACATECAS">Zacatecas (3%)</option>
+                  </optgroup>
+                  <optgroup label="Sin ISH">
+                    <option value="OTRO">Otro estado (0%)</option>
+                  </optgroup>
                 </select>
+                <small id="nota-ish" style="color: #888; font-size: 0.75rem; margin-top: 4px; display: block;"></small>
               </div>
 
               <div class="input-group">
@@ -817,10 +853,24 @@
     
     // Impuesto local por ubicación
     const IMPUESTO_LOCAL = {
-      PV: 0.03,      // Puerto Vallarta 3%
-      NAYARIT: 0.05, // Nayarit/Bahía 5%
-      OTRO: 0        // Otros sin impuesto local
+      // Con convenio Airbnb
+      CDMX: 0.05, JALISCO: 0.03, QROO: 0.04, YUCATAN: 0.05,
+      BCS: 0.05, EDOMEX: 0.03, OAXACA: 0.03, SINALOA: 0.03,
+      SONORA: 0.02, CHIAPAS: 0.02, PUEBLA: 0.03, GUERRERO: 0.04,
+      // Sin convenio (host paga)
+      NAYARIT: 0.05, BC: 0.05, NL: 0.03, QUERETARO: 0.025,
+      MICHOACAN: 0.03, COLIMA: 0.02, AGUASCALIENTES: 0.03,
+      CAMPECHE: 0.02, COAHUILA: 0.03, DURANGO: 0.02,
+      GUANAJUATO: 0.02, HIDALGO: 0.03, MORELOS: 0.02,
+      SLP: 0.015, TABASCO: 0.02, TAMAULIPAS: 0.02,
+      TLAXCALA: 0.02, VERACRUZ: 0.02, ZACATECAS: 0.03,
+      OTRO: 0
     };
+    // Estados donde Airbnb tiene convenio (host NO paga ISH)
+    const CONVENIO_ISH = [
+      "CDMX", "JALISCO", "QROO", "YUCATAN", "BCS", "EDOMEX",
+      "OAXACA", "SINALOA", "SONORA", "CHIAPAS", "PUEBLA", "GUERRERO"
+    ];
 
     const tasa_comision = COMISIONES_PLATAFORMA[plataforma] || 0.03;
     const ingreso_bruto_reserva = (tarifa_noche * noches) + tarifa_limpieza;
@@ -853,16 +903,22 @@
     const ingreso_neto_airbnb = ingreso_bruto_reserva - total_retenciones;
     const gastos_reserva = gasto_limpieza_real + gasto_consumibles + gasto_comisiones_otras;
 
+    // Verificar si el estado tiene convenio con Airbnb
+    const tieneConvenio = CONVENIO_ISH.includes(ubicacion_hospedaje);
+    
+    // ISH solo aplica si NO tiene convenio (host debe pagarlo)
+    const ish_a_pagar = tieneConvenio ? 0 : impuesto_local;
+    
     // Impuestos a pagar por host segun regimen
     let impuestos_estimados_reserva = 0;
     
     if (regimen_fiscal === "SIN_RFC") {
-      // Sin RFC: solo ISH (el 20% ISR y 16% IVA ya lo retuvo Airbnb)
-      impuestos_estimados_reserva = impuesto_local;
+      // Sin RFC: solo ISH si no tiene convenio
+      impuestos_estimados_reserva = ish_a_pagar;
     } else {
-      // Con RFC: IVA no retenido (8%) + ISH
+      // Con RFC: IVA no retenido (8%) + ISH si no tiene convenio
       const iva_host = ingreso_bruto_reserva * 0.08;
-      impuestos_estimados_reserva = iva_host + impuesto_local;
+      impuestos_estimados_reserva = iva_host + ish_a_pagar;
     }
     impuestos_estimados_reserva = Math.round(impuestos_estimados_reserva * 100) / 100;
 
@@ -872,6 +928,8 @@
       ingreso_bruto_reserva: Math.round(ingreso_bruto_reserva * 100) / 100,
       comision_airbnb_reserva: Math.round(comision_airbnb_reserva * 100) / 100,
       impuesto_local: Math.round(impuesto_local * 100) / 100,
+      ish_a_pagar: Math.round(ish_a_pagar * 100) / 100,
+      tieneConvenio,
       retencion_iva: Math.round(retencion_iva * 100) / 100,
       retencion_isr: Math.round(retencion_isr * 100) / 100,
       total_retenciones: Math.round(total_retenciones * 100) / 100,
@@ -1248,9 +1306,17 @@
         
         // Mostrar impuesto local si aplica
         const impuestoLocalRow = document.getElementById("impuesto-local-row");
+        const labelIsh = document.getElementById("res-label-impuesto-local");
         if (r.impuesto_local > 0) {
           impuestoLocalRow.style.display = "block";
-          await formatDual(r.impuesto_local, "res-impuesto-local");
+          // Actualizar label segun convenio
+          if (r.tieneConvenio) {
+            if (labelIsh) labelIsh.innerHTML = "Impuesto local hospedaje <small style='color:#4ade80'>(Airbnb paga)</small>";
+            await formatDual(0, "res-impuesto-local"); // Mostrar 0 porque Airbnb lo paga
+          } else {
+            if (labelIsh) labelIsh.innerHTML = "Impuesto local hospedaje <small style='color:#fbbf24'>(tú pagas)</small>";
+            await formatDual(r.ish_a_pagar, "res-impuesto-local");
+          }
         } else {
           impuestoLocalRow.style.display = "none";
         }
@@ -1283,6 +1349,35 @@
       window.location.href = "https://buy.stripe.com/test_dRmaEZdak0Rg4Kv3oi3VC00";
     });
   }
+
+  // === Nota dinamica ISH ===
+  const CONVENIO_LISTA = [
+    "CDMX", "JALISCO", "QROO", "YUCATAN", "BCS", "EDOMEX",
+    "OAXACA", "SINALOA", "SONORA", "CHIAPAS", "PUEBLA", "GUERRERO"
+  ];
+  
+  function actualizarNotaISH() {
+    const ubicacion = document.getElementById("ubicacion_hospedaje");
+    const nota = document.getElementById("nota-ish");
+    if (!ubicacion || !nota) return;
+    
+    const estado = ubicacion.value;
+    const tieneConvenio = CONVENIO_LISTA.includes(estado);
+    
+    if (estado === "OTRO") {
+      nota.textContent = "";
+    } else if (tieneConvenio) {
+      nota.innerHTML = "✅ Airbnb retiene y paga el ISH. No afecta tu ganancia.";
+      nota.style.color = "#4ade80";
+    } else {
+      nota.innerHTML = "⚠️ Tú debes pagar el ISH al estado. Se resta de tu ganancia.";
+      nota.style.color = "#fbbf24";
+    }
+  }
+  
+  // Actualizar nota al cargar y al cambiar
+  document.getElementById("ubicacion_hospedaje")?.addEventListener("change", actualizarNotaISH);
+  actualizarNotaISH(); // Ejecutar al cargar
 </script>
     <script src="pdf-generator.js?v=1736200000"></script>
 <script>
