@@ -903,22 +903,37 @@
     const ingreso_neto_airbnb = ingreso_bruto_reserva - total_retenciones;
     const gastos_reserva = gasto_limpieza_real + gasto_consumibles + gasto_comisiones_otras;
 
-    // Verificar si el estado tiene convenio con Airbnb
-    const tieneConvenio = CONVENIO_ISH.includes(ubicacion_hospedaje);
+    // Verificar si el estado tiene convenio con Airbnb (solo aplica para Airbnb)
+    const tieneConvenioISH = esAirbnb && CONVENIO_ISH.includes(ubicacion_hospedaje);
     
-    // ISH solo aplica si NO tiene convenio (host debe pagarlo)
-    const ish_a_pagar = tieneConvenio ? 0 : impuesto_local;
+    // ISH: Airbnb con convenio = 0, otros casos = host paga
+    const ish_a_pagar = tieneConvenioISH ? 0 : impuesto_local;
     
-    // Impuestos a pagar por host segun regimen
+    // Impuestos a pagar por host segun plataforma y regimen
     let impuestos_estimados_reserva = 0;
     
-    if (regimen_fiscal === "SIN_RFC") {
-      // Sin RFC: solo ISH si no tiene convenio
-      impuestos_estimados_reserva = ish_a_pagar;
+    if (esAirbnb) {
+      // Airbnb: Ya retuvo parte del IVA
+      if (regimen_fiscal === "SIN_RFC") {
+        // Sin RFC: Airbnb retuvo 16% IVA, solo paga ISH si aplica
+        impuestos_estimados_reserva = ish_a_pagar;
+      } else {
+        // Con RFC: Airbnb retuvo 8% IVA, host paga otro 8% + ISH
+        const iva_host = ingreso_bruto_reserva * 0.08;
+        impuestos_estimados_reserva = iva_host + ish_a_pagar;
+      }
     } else {
-      // Con RFC: IVA no retenido (8%) + ISH si no tiene convenio
-      const iva_host = ingreso_bruto_reserva * 0.08;
-      impuestos_estimados_reserva = iva_host + ish_a_pagar;
+      // VRBO/Booking/Otra: Sin retenciones, host paga todo
+      if (regimen_fiscal === "SIN_RFC") {
+        // Sin RFC en otra plataforma: debe pagar 20% ISR + ISH
+        // (No hay retencion automatica)
+        const isr_host = ingreso_bruto_reserva * 0.20;
+        impuestos_estimados_reserva = isr_host + ish_a_pagar;
+      } else {
+        // Con RFC: debe pagar 16% IVA completo + ISH
+        const iva_host = ingreso_bruto_reserva * 0.16;
+        impuestos_estimados_reserva = iva_host + ish_a_pagar;
+      }
     }
     impuestos_estimados_reserva = Math.round(impuestos_estimados_reserva * 100) / 100;
 
@@ -929,7 +944,7 @@
       comision_airbnb_reserva: Math.round(comision_airbnb_reserva * 100) / 100,
       impuesto_local: Math.round(impuesto_local * 100) / 100,
       ish_a_pagar: Math.round(ish_a_pagar * 100) / 100,
-      tieneConvenio,
+      tieneConvenioISH,
       retencion_iva: Math.round(retencion_iva * 100) / 100,
       retencion_isr: Math.round(retencion_isr * 100) / 100,
       total_retenciones: Math.round(total_retenciones * 100) / 100,
@@ -1310,7 +1325,7 @@
         if (r.impuesto_local > 0) {
           impuestoLocalRow.style.display = "block";
           // Actualizar label segun convenio
-          if (r.tieneConvenio) {
+          if (r.tieneConvenioISH) {
             if (labelIsh) labelIsh.innerHTML = "Impuesto local hospedaje <small style='color:#4ade80'>(Airbnb paga)</small>";
             await formatDual(0, "res-impuesto-local"); // Mostrar 0 porque Airbnb lo paga
           } else {
