@@ -837,12 +837,13 @@
     
     if (esAirbnb) {
       if (regimen_fiscal === "SIN_RFC") {
-        // Sin RFC: Airbnb retiene 20% provisional
+        // Sin RFC: Airbnb retiene 20% ISR + 16% IVA (100% del IVA)
         retencion_isr = ingreso_bruto_reserva * 0.20;
+        retencion_iva = ingreso_bruto_reserva * 0.16;
       } else {
-        // Con RFC: Airbnb retiene 8% IVA + 4% ISR
-        retencion_iva = ingreso_bruto_reserva * RETENCION_IVA;
+        // Con RFC: Airbnb retiene 4% ISR + 8% IVA (50% del IVA)
         retencion_isr = ingreso_bruto_reserva * RETENCION_ISR;
+        retencion_iva = ingreso_bruto_reserva * RETENCION_IVA;
       }
     }
     
@@ -856,7 +857,7 @@
     let impuestos_estimados_reserva = 0;
     
     if (regimen_fiscal === "SIN_RFC") {
-      // Sin RFC: solo ISH, el 20% ya lo retuvo Airbnb
+      // Sin RFC: solo ISH (el 20% ISR y 16% IVA ya lo retuvo Airbnb)
       impuestos_estimados_reserva = impuesto_local;
     } else {
       // Con RFC: IVA no retenido (8%) + ISH
@@ -1218,6 +1219,14 @@
         const retencionIsrRow = document.getElementById("retencion-isr-row");
         if (r.retencion_iva > 0) {
           retencionIvaRow.style.display = "block";
+          // Actualizar label IVA segun regimen
+          const regimenIva = document.getElementById("regimen_fiscal").value;
+          const labelIva = document.getElementById("res-label-retencion-iva");
+          if (regimenIva === "SIN_RFC") {
+            labelIva.textContent = "Retención IVA (16%)";
+          } else {
+            labelIva.textContent = "Retención IVA (8%)";
+          }
           await formatDual(r.retencion_iva, "res-retencion-iva");
         } else {
           retencionIvaRow.style.display = "none";
