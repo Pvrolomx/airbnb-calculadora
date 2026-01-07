@@ -840,8 +840,8 @@
     }
     
     const total_retenciones = comision_airbnb_reserva + retencion_iva + retencion_isr;
-    // Impuesto local se suma porque lo recibes (pass-through)
-    const ingreso_neto_airbnb = ingreso_bruto_reserva - total_retenciones + impuesto_local;
+    
+    // ISH es pass-through: lo recibes pero lo enteras al estado\n    const ingreso_neto_airbnb = ingreso_bruto_reserva - total_retenciones;
     const gastos_reserva = gasto_limpieza_real + gasto_consumibles + gasto_comisiones_otras;
 
     // Impuestos adicionales (la retención ISR es pago a cuenta)
@@ -858,7 +858,7 @@
     if (impuestos_estimados_reserva < 0) impuestos_estimados_reserva = 0;
     impuestos_estimados_reserva = Math.round(impuestos_estimados_reserva * 100) / 100;
 
-    const ganancia_neta_reserva = Math.round((ingreso_neto_airbnb - gastos_reserva - impuestos_estimados_reserva) * 100) / 100;
+    const ganancia_neta_reserva = Math.round((ingreso_neto_airbnb - gastos_reserva - impuestos_estimados_reserva - impuesto_local) * 100) / 100;
 
     return {
       ingreso_bruto_reserva: Math.round(ingreso_bruto_reserva * 100) / 100,
