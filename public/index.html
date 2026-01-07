@@ -209,6 +209,7 @@
         font-size: 14px;
         font-weight: 600;
         margin-top: 2px;
+        color: #ffffff;
       }
 
       .result-value.positive {
@@ -667,7 +668,7 @@
 
             <div class="result-item">
               <div class="result-label" id="res-label-impuestos">
-                Impuesto estimado (aprox.)
+                Impuesto estimado a pagar por host
               </div>
               <div
                 id="res-impuestos"
@@ -855,12 +856,13 @@
     let base_impuestos = ingreso_bruto_reserva - gastos_reserva;
     if (base_impuestos < 0) base_impuestos = 0;
 
-    let impuesto_bruto = base_impuestos * tasa_impuesto;
-    let impuestos_estimados_reserva = impuesto_bruto - retencion_isr;
-    if (impuestos_estimados_reserva < 0) impuestos_estimados_reserva = 0;
+    // IVA a pagar por host = 8% (la otra mitad del 16%)
+    const iva_host = ingreso_bruto_reserva * 0.08;
+    // Impuesto estimado = IVA no retenido + ISH (impuesto local)
+    let impuestos_estimados_reserva = iva_host + impuesto_local;
     impuestos_estimados_reserva = Math.round(impuestos_estimados_reserva * 100) / 100;
 
-    const ganancia_neta_reserva = Math.round((ingreso_neto_airbnb - gastos_reserva - impuestos_estimados_reserva - impuesto_local) * 100) / 100;
+    const ganancia_neta_reserva = Math.round((ingreso_neto_airbnb - gastos_reserva - impuestos_estimados_reserva) * 100) / 100;
 
     return {
       ingreso_bruto_reserva: Math.round(ingreso_bruto_reserva * 100) / 100,
@@ -902,7 +904,7 @@
       resIngresoBruto: "Ingreso bruto (reserva)",
       resComision: "Comisión plataforma (estimada)",
       resGastos: "Gastos directos reserva",
-      resImpuestos: "Impuesto estimado (aprox.)",
+      resImpuestos: "Impuesto estimado a pagar por host",
       resGananciaNeta: "Ganancia neta estimada",
 
       // Opciones del select de régimen
@@ -963,7 +965,7 @@
       resIngresoBruto: "Gross income (booking)",
       resComision: "Platform commission (estimated)",
       resGastos: "Direct booking expenses",
-      resImpuestos: "Estimated tax (approx.)",
+      resImpuestos: "Estimated tax payable by host",
       resGananciaNeta: "Estimated net income",
 
       // Select options
