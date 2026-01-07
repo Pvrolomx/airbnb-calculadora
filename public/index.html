@@ -833,7 +833,7 @@
     let retencion_iva = 0;
     let retencion_isr = 0;
     const esAirbnb = plataforma === "AIRBNB" || plataforma === "AIRBNB_SIMPLIFIED";
-    const tieneRFC = regimen_fiscal !== "NO_RFC";
+    const tieneRFC = regimen_fiscal !== "SIN_RFC";
     
     if (tieneRFC && esAirbnb) {
       retencion_iva = ingreso_bruto_reserva * RETENCION_IVA;
@@ -842,12 +842,13 @@
     
     const total_retenciones = comision_airbnb_reserva + retencion_iva + retencion_isr;
     
-    // ISH es pass-through: lo recibes pero lo enteras al estado\n    const ingreso_neto_airbnb = ingreso_bruto_reserva - total_retenciones;
+    // ISH es pass-through: lo recibes pero lo enteras al estado
+    const ingreso_neto_airbnb = ingreso_bruto_reserva - total_retenciones;
     const gastos_reserva = gasto_limpieza_real + gasto_consumibles + gasto_comisiones_otras;
 
     // Impuestos adicionales (la retención ISR es pago a cuenta)
     let tasa_impuesto = 0;
-    if (regimen_fiscal === "NO_RFC") tasa_impuesto = 0.20;
+    if (regimen_fiscal === "SIN_RFC") tasa_impuesto = 0.20;
     if (regimen_fiscal === "RESICO") tasa_impuesto = 0.025;
     if (regimen_fiscal === "ACTIVIDAD_EMPRESARIAL") tasa_impuesto = 0.30;
 
