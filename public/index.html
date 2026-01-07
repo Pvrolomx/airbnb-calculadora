@@ -404,6 +404,7 @@
           <div id="credit-counter" style="margin-top:16px;padding:8px 16px;background:#10b981;color:white;border-radius:8px;font-size:14px;font-weight:700;text-align:center;display:inline-block;">
             ⚡ 10 cálculos restantes
           </div>
+          <button id="install-btn" type="button" onclick="installApp()" style="display:none;margin-top:12px;padding:10px 20px;background:linear-gradient(135deg,#3b82f6,#8b5cf6);color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;box-shadow:0 4px 12px rgba(59,130,246,0.4);">📲 <span id="install-text">Instalar App</span></button>
         </div>
         <button id="lang-toggle" class="lang-toggle" type="button">
           <span class="flag">🇲🇽</span>
@@ -626,7 +627,6 @@
                 <span id="btn-calcular-text">Calcular estimado</span>
               </button>
               <button id="btn-reset" type="button" onclick="localStorage.clear();location.reload();" style="padding:10px 16px;background:#64748b;color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;">🔄 <span id="btn-reset-text">Reset</span></button>
-              <button id="install-btn" type="button" onclick="installApp()" style="display:none;padding:10px 16px;background:#10b981;color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;align-items:center;gap:6px;">📲 <span id="install-text">Instalar App</span></button>
             </div>
 
           <div id="results" class="result-row" style="display: none">
