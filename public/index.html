@@ -1224,6 +1224,14 @@
         }
         if (r.retencion_isr > 0) {
           retencionIsrRow.style.display = "block";
+          // Actualizar label segun regimen
+          const regimenActual = document.getElementById("regimen_fiscal").value;
+          const labelIsr = document.getElementById("res-label-retencion-isr");
+          if (regimenActual === "SIN_RFC") {
+            labelIsr.textContent = "Retención ISR (20%)";
+          } else {
+            labelIsr.textContent = "Retención ISR (4%)";
+          }
           await formatDual(r.retencion_isr, "res-retencion-isr");
         } else {
           retencionIsrRow.style.display = "none";
