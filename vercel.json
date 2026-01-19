@@ -10,11 +10,7 @@
       "use": "@vercel/static"
     }
   ],
-  "routes": [
-    { "handle": "filesystem" },
-    {
-      "src": "/(.*)",
-      "dest": "/public/$1"
-    }
+  "rewrites": [
+    { "source": "/:path*", "destination": "/public/:path*" }
   ]
 }
