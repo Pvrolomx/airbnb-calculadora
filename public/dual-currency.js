@@ -7,7 +7,7 @@ let fxRate = 20;
 // Fetch FX rate
 async function loadFxRate() {
   try {
-    const res = await fetch('/fx-usd');
+    const res = await fetch('/api/fx-usd');
     const data = await res.json();
     if (data.ok && data.rate) {
       fxRate = data.rate;
