@@ -503,6 +503,16 @@
       .nota-saneamiento.visible {
         display: block;
       }
+      
+      .nota-saneamiento-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      
+      .nota-saneamiento-header:hover {
+        opacity: 0.8;
+      }
 
       .nota-saneamiento-header {
         display: flex;
@@ -734,28 +744,6 @@
                   </optgroup>
                 </select>
                 <small id="nota-ish" style="color: #888; font-size: 0.75rem; margin-top: 4px; display: block;"></small>
-                
-                <!-- Nota Saneamiento Ambiental PV -->
-                <div id="nota-saneamiento" class="nota-saneamiento">
-                  <div class="nota-saneamiento-header">
-                    <span class="nota-saneamiento-icon">⚠️</span>
-                    <span class="nota-saneamiento-titulo" id="nota-saneamiento-titulo">Aviso: Puerto Vallarta 2026</span>
-                  </div>
-                  <div class="nota-saneamiento-contenido">
-                    <p id="nota-saneamiento-texto">
-                      La Ley de Ingresos de Puerto Vallarta 2026 contempla un 
-                      impuesto de saneamiento ambiental (~$90 MXN/noche) que 
-                      podría aplicar a rentas vacacionales en plataformas digitales.
-                    </p>
-                    <p class="nota-saneamiento-disclaimer" id="nota-saneamiento-disclaimer">
-                      <strong>Pendiente de confirmación.</strong> 
-                      Este impuesto aún no se incluye en el cálculo.
-                    </p>
-                    <span class="nota-saneamiento-link" id="nota-saneamiento-link" onclick="mostrarInfoSaneamiento()">
-                      Más información →
-                    </span>
-                  </div>
-                </div>
               </div>
 
               <div class="input-group">
@@ -1001,6 +989,29 @@
             <strong style="color: #fbbf24;">Tasas fiscales:</strong> Los porcentajes de impuestos son estimaciones.
             Actividad Empresarial usa 30% aproximado (la tabla real del ISR varía entre 1.92%-35%).
             Consulte a un contador para cálculo exacto según su situación fiscal específica.
+          </div>
+          
+          <!-- Nota Saneamiento Ambiental PV (con toggle) -->
+          <div id="nota-saneamiento" class="nota-saneamiento" style="margin-top: 16px;">
+            <div class="nota-saneamiento-header" id="nota-saneamiento-toggle" style="cursor: pointer;">
+              <span class="nota-saneamiento-icon">⚠️</span>
+              <span class="nota-saneamiento-titulo" id="nota-saneamiento-titulo">Aviso: Puerto Vallarta 2026</span>
+              <span id="nota-saneamiento-arrow" style="margin-left: auto; color: #9ca3af;">▼</span>
+            </div>
+            <div class="nota-saneamiento-contenido" id="nota-saneamiento-body" style="display: none;">
+              <p id="nota-saneamiento-texto">
+                La Ley de Ingresos de Puerto Vallarta 2026 contempla un 
+                impuesto de saneamiento ambiental (~$90 MXN/noche) que 
+                podría aplicar a rentas vacacionales en plataformas digitales.
+              </p>
+              <p class="nota-saneamiento-disclaimer" id="nota-saneamiento-disclaimer">
+                <strong>Pendiente de confirmación.</strong> 
+                Este impuesto aún no se incluye en el cálculo.
+              </p>
+              <span class="nota-saneamiento-link" id="nota-saneamiento-link" onclick="mostrarInfoSaneamiento()">
+                Más información →
+              </span>
+            </div>
           </div>
         </section>
 
@@ -1385,6 +1396,9 @@
     
     setText("ganancia-hero-label", t.gananciaHeroLabel);
     setText("btn-desglose-text", t.btnDesglose);
+    
+    // Actualizar textos nota saneamiento
+    if (typeof actualizarTextosSaneamiento === "function") actualizarTextosSaneamiento();
 
     // Panel derecho
     setText("side-title", t.sideTitle);
@@ -1666,20 +1680,24 @@
     if (notaSaneamiento) {
       if (estado === "JALISCO") {
         notaSaneamiento.classList.add("visible");
-        // Actualizar textos según idioma
-        const tituloEl = document.getElementById("nota-saneamiento-titulo");
-        const textoEl = document.getElementById("nota-saneamiento-texto");
-        const disclaimerEl = document.getElementById("nota-saneamiento-disclaimer");
-        const linkEl = document.getElementById("nota-saneamiento-link");
-        
-        if (tituloEl) tituloEl.textContent = t.notaSaneamientoTitulo;
-        if (textoEl) textoEl.textContent = t.notaSaneamientoTexto;
-        if (disclaimerEl) disclaimerEl.innerHTML = t.notaSaneamientoDisclaimer;
-        if (linkEl) linkEl.textContent = t.notaSaneamientoLink;
       } else {
         notaSaneamiento.classList.remove("visible");
       }
     }
+  }
+  
+  // Actualizar textos nota saneamiento según idioma
+  function actualizarTextosSaneamiento() {
+    const t = texts[currentLang] || texts.es;
+    const tituloEl = document.getElementById("nota-saneamiento-titulo");
+    const textoEl = document.getElementById("nota-saneamiento-texto");
+    const disclaimerEl = document.getElementById("nota-saneamiento-disclaimer");
+    const linkEl = document.getElementById("nota-saneamiento-link");
+    
+    if (tituloEl) tituloEl.textContent = t.notaSaneamientoTitulo;
+    if (textoEl) textoEl.textContent = t.notaSaneamientoTexto;
+    if (disclaimerEl) disclaimerEl.innerHTML = t.notaSaneamientoDisclaimer;
+    if (linkEl) linkEl.textContent = t.notaSaneamientoLink;
   }
   
   // Modal info saneamiento
@@ -1688,9 +1706,26 @@
     alert(t.notaSaneamientoModal);
   }
   
+  // Toggle nota saneamiento
+  const notaSaneamientoToggle = document.getElementById("nota-saneamiento-toggle");
+  if (notaSaneamientoToggle) {
+    notaSaneamientoToggle.addEventListener("click", function() {
+      const body = document.getElementById("nota-saneamiento-body");
+      const arrow = document.getElementById("nota-saneamiento-arrow");
+      if (body.style.display === "none") {
+        body.style.display = "block";
+        arrow.textContent = "▲";
+      } else {
+        body.style.display = "none";
+        arrow.textContent = "▼";
+      }
+    });
+  }
+  
   // Actualizar nota al cargar y al cambiar
   document.getElementById("ubicacion_hospedaje")?.addEventListener("change", actualizarNotaISH);
   actualizarNotaISH(); // Ejecutar al cargar
+  actualizarTextosSaneamiento(); // Textos iniciales
 
   // === Toggle Desglose ===
   const toggleDesgloseBtn = document.getElementById("toggle-desglose");
