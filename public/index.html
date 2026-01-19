@@ -489,6 +489,61 @@
         max-height: 2000px;
       }
 
+    
+      /* ======= NOTA INFORMATIVA SANEAMIENTO PV ======= */
+      .nota-saneamiento {
+        background: #1e293b;
+        border-left: 4px solid #f59e0b;
+        border-radius: 0 8px 8px 0;
+        padding: 12px;
+        margin: 12px 0;
+        display: none;
+      }
+      
+      .nota-saneamiento.visible {
+        display: block;
+      }
+
+      .nota-saneamiento-header {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+      }
+
+      .nota-saneamiento-icon {
+        font-size: 1.1rem;
+      }
+
+      .nota-saneamiento-titulo {
+        font-weight: 600;
+        color: #f59e0b;
+        font-size: 0.9rem;
+      }
+
+      .nota-saneamiento-contenido p {
+        font-size: 0.8rem;
+        color: #9ca3af;
+        margin: 6px 0;
+        line-height: 1.4;
+      }
+
+      .nota-saneamiento-disclaimer {
+        color: #6b7280;
+        font-style: italic;
+      }
+
+      .nota-saneamiento-link {
+        color: #10b981;
+        font-size: 0.8rem;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .nota-saneamiento-link:hover {
+        text-decoration: underline;
+      }
+
     </style>
     <script src="/credits.js?v=1734800000"></script>
     <script src="/dual-currency.js?v=1766329419"></script>
@@ -679,6 +734,28 @@
                   </optgroup>
                 </select>
                 <small id="nota-ish" style="color: #888; font-size: 0.75rem; margin-top: 4px; display: block;"></small>
+                
+                <!-- Nota Saneamiento Ambiental PV -->
+                <div id="nota-saneamiento" class="nota-saneamiento">
+                  <div class="nota-saneamiento-header">
+                    <span class="nota-saneamiento-icon">⚠️</span>
+                    <span class="nota-saneamiento-titulo" id="nota-saneamiento-titulo">Aviso: Puerto Vallarta 2026</span>
+                  </div>
+                  <div class="nota-saneamiento-contenido">
+                    <p id="nota-saneamiento-texto">
+                      La Ley de Ingresos de Puerto Vallarta 2026 contempla un 
+                      impuesto de saneamiento ambiental (~$90 MXN/noche) que 
+                      podría aplicar a rentas vacacionales en plataformas digitales.
+                    </p>
+                    <p class="nota-saneamiento-disclaimer" id="nota-saneamiento-disclaimer">
+                      <strong>Pendiente de confirmación.</strong> 
+                      Este impuesto aún no se incluye en el cálculo.
+                    </p>
+                    <span class="nota-saneamiento-link" id="nota-saneamiento-link" onclick="mostrarInfoSaneamiento()">
+                      Más información →
+                    </span>
+                  </div>
+                </div>
               </div>
 
               <div class="input-group">
@@ -1134,6 +1211,13 @@
       notaIshConvenio: "✓ En este estado, Airbnb tiene convenio y retiene el ISH. No lo pagas tú.",
       notaIshSinConvenio: "⚠ En este estado, tú debes pagar el impuesto local de hospedaje.",
       
+      // Nota saneamiento PV
+      notaSaneamientoTitulo: "Aviso: Puerto Vallarta 2026",
+      notaSaneamientoTexto: "La Ley de Ingresos de Puerto Vallarta 2026 contempla un impuesto de saneamiento ambiental (~$90 MXN/noche) que podría aplicar a rentas vacacionales en plataformas digitales.",
+      notaSaneamientoDisclaimer: "<strong>Pendiente de confirmación.</strong> Este impuesto aún no se incluye en el cálculo.",
+      notaSaneamientoLink: "Más información →",
+      notaSaneamientoModal: "Impuesto de Saneamiento Ambiental - Puerto Vallarta 2026\n\n• Base legal: Art. 80 ter Ley de Ingresos PV 2026\n• Monto: 80% de la UMA por noche (~$90 MXN)\n• Aplica a: Plataformas digitales (Airbnb, Vrbo, etc.)\n\nEste impuesto está publicado pero su aplicación está pendiente de confirmación. Recomendamos consultar con un contador para mayor información.",
+      
       // Panel derecho
       sideTitle: "Qué hace esta herramienta",
       sideHighlightHtml:
@@ -1205,6 +1289,13 @@
       btnDesgloseOcultar: "▲ Hide breakdown",
       notaIshConvenio: "✓ In this state, Airbnb has an agreement and withholds the lodging tax. You don't pay it.",
       notaIshSinConvenio: "⚠ In this state, you must pay the local lodging tax.",
+      
+      // Nota saneamiento PV
+      notaSaneamientoTitulo: "Notice: Puerto Vallarta 2026",
+      notaSaneamientoTexto: "Puerto Vallarta's 2026 Revenue Law includes an environmental sanitation tax (~$90 MXN/night) that may apply to vacation rentals on digital platforms.",
+      notaSaneamientoDisclaimer: "<strong>Pending confirmation.</strong> This tax is not yet included in the calculation.",
+      notaSaneamientoLink: "More information →",
+      notaSaneamientoModal: "Environmental Sanitation Tax - Puerto Vallarta 2026\n\n• Legal basis: Art. 80 ter PV Revenue Law 2026\n• Amount: 80% of UMA per night (~$90 MXN)\n• Applies to: Digital platforms (Airbnb, Vrbo, etc.)\n\nThis tax is published but its application is pending confirmation. We recommend consulting with an accountant for more information.",
 
       // Right panel
       btnReset: "Reset",
@@ -1553,12 +1644,14 @@
   function actualizarNotaISH() {
     const ubicacion = document.getElementById("ubicacion_hospedaje");
     const nota = document.getElementById("nota-ish");
+    const notaSaneamiento = document.getElementById("nota-saneamiento");
     if (!ubicacion || !nota) return;
     
     const t = texts[currentLang] || texts.es;
     const estado = ubicacion.value;
     const tieneConvenio = CONVENIO_LISTA.includes(estado);
     
+    // Nota ISH
     if (estado === "OTRO") {
       nota.textContent = "";
     } else if (tieneConvenio) {
@@ -1568,6 +1661,31 @@
       nota.innerHTML = t.notaIshSinConvenio;
       nota.style.color = "#fbbf24";
     }
+    
+    // Nota Saneamiento PV (solo Jalisco)
+    if (notaSaneamiento) {
+      if (estado === "JALISCO") {
+        notaSaneamiento.classList.add("visible");
+        // Actualizar textos según idioma
+        const tituloEl = document.getElementById("nota-saneamiento-titulo");
+        const textoEl = document.getElementById("nota-saneamiento-texto");
+        const disclaimerEl = document.getElementById("nota-saneamiento-disclaimer");
+        const linkEl = document.getElementById("nota-saneamiento-link");
+        
+        if (tituloEl) tituloEl.textContent = t.notaSaneamientoTitulo;
+        if (textoEl) textoEl.textContent = t.notaSaneamientoTexto;
+        if (disclaimerEl) disclaimerEl.innerHTML = t.notaSaneamientoDisclaimer;
+        if (linkEl) linkEl.textContent = t.notaSaneamientoLink;
+      } else {
+        notaSaneamiento.classList.remove("visible");
+      }
+    }
+  }
+  
+  // Modal info saneamiento
+  function mostrarInfoSaneamiento() {
+    const t = texts[currentLang] || texts.es;
+    alert(t.notaSaneamientoModal);
   }
   
   // Actualizar nota al cargar y al cambiar
