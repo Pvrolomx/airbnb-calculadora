@@ -1279,6 +1279,21 @@
     setText("btnComprarReporte", t.pdfButton);
     setText("pdf-stripe-note", t.pdfStripeNote);
     setText("btn-reset-text", t.btnReset);
+    
+    // Ubicación y hero
+    const labelUbicacion = document.getElementById("label-ubicacion");
+    if (labelUbicacion) {
+      labelUbicacion.innerHTML = '<span class="tooltip-icon" data-tip="' + t.ubicacionTooltip + '">?</span> ' + t.labelUbicacion;
+    }
+    
+    const optConvenio = document.getElementById("optgroup-convenio");
+    if (optConvenio) optConvenio.label = t.optgroupConvenio;
+    
+    const optSinConvenio = document.getElementById("optgroup-sin-convenio");
+    if (optSinConvenio) optSinConvenio.label = t.optgroupSinConvenio;
+    
+    setText("ganancia-hero-label", t.gananciaHeroLabel);
+    setText("btn-desglose-text", t.btnDesglose);
 
     // Panel derecho
     setText("side-title", t.sideTitle);
