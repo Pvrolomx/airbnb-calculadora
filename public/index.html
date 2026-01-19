@@ -639,7 +639,7 @@
                   Ubicación del hospedaje
                 </label>
                 <select id="ubicacion_hospedaje" class="input-field">
-                  <optgroup label="📍 Con convenio Airbnb (no pagas ISH)">
+                  <optgroup id="optgroup-convenio" label="📍 Con convenio Airbnb (no pagas ISH)">
                     <option value="CDMX">Ciudad de México (5%)</option>
                     <option value="JALISCO" selected>Jalisco / Pto Vallarta (3%)</option>
                     <option value="QROO">Quintana Roo (4%)</option>
@@ -653,7 +653,7 @@
                     <option value="PUEBLA">Puebla (3%)</option>
                     <option value="GUERRERO">Guerrero (4%)</option>
                   </optgroup>
-                  <optgroup label="⚠️ Sin convenio (tú pagas ISH)">
+                  <optgroup id="optgroup-sin-convenio" label="⚠️ Sin convenio (tú pagas ISH)">
                     <option value="NAYARIT">Nayarit (5%)</option>
                     <option value="BC">Baja California (5%)</option>
                     <option value="NL">Nuevo León (3%)</option>
@@ -736,7 +736,7 @@
           <!-- RESULTADO PRINCIPAL - Ganancia neta prominente -->
           <div id="resultado-principal" class="resultado-hero">
             <div class="ganancia-container">
-              <span class="ganancia-label">💰 Tu ganancia neta</span>
+              <span class="ganancia-label" id="ganancia-hero-label">💰 Tu ganancia neta</span>
               <div class="ganancia-monto">
                 <span id="ganancia-hero-mxn">$0.00</span>
                 <span class="moneda">MXN</span>
@@ -747,7 +747,7 @@
             </div>
             
             <button id="toggle-desglose" class="btn-desglose" type="button">
-              ▼ Ver desglose completo
+              <span id="btn-desglose-text">▼ Ver desglose completo</span>
             </button>
           </div>
 
@@ -1122,6 +1122,18 @@
         "Cada cálculo genera un reporte descargable en PDF. Pago procesado con Stripe. Herramienta informativa, no sustituye asesoría contable.",
       
       btnReset: "Reiniciar",
+      
+      // Ubicación y hero
+      labelUbicacion: "Ubicación del hospedaje",
+      ubicacionTooltip: "Impuesto local de hospedaje",
+      optgroupConvenio: "📍 Con convenio Airbnb (no pagas ISH)",
+      optgroupSinConvenio: "⚠️ Sin convenio (tú pagas ISH)",
+      gananciaHeroLabel: "💰 Tu ganancia neta",
+      btnDesglose: "▼ Ver desglose completo",
+      btnDesgloseOcultar: "▲ Ocultar desglose",
+      notaIshConvenio: "✓ En este estado, Airbnb tiene convenio y retiene el ISH. No lo pagas tú.",
+      notaIshSinConvenio: "⚠ En este estado, tú debes pagar el impuesto local de hospedaje.",
+      
       // Panel derecho
       sideTitle: "Qué hace esta herramienta",
       sideHighlightHtml:
@@ -1182,6 +1194,17 @@
       pdfButton: "Buy 10 calculations — $10 MXN",
       pdfStripeNote:
         "Each calculation includes a downloadable PDF report. Payments are processed via Stripe. This is an informational tool and does not replace accounting advice.",
+
+      // Location and hero
+      labelUbicacion: "Property location",
+      ubicacionTooltip: "Local lodging tax",
+      optgroupConvenio: "📍 With Airbnb agreement (no lodging tax)",
+      optgroupSinConvenio: "⚠️ No agreement (you pay lodging tax)",
+      gananciaHeroLabel: "💰 Your net earnings",
+      btnDesglose: "▼ See full breakdown",
+      btnDesgloseOcultar: "▲ Hide breakdown",
+      notaIshConvenio: "✓ In this state, Airbnb has an agreement and withholds the lodging tax. You don't pay it.",
+      notaIshSinConvenio: "⚠ In this state, you must pay the local lodging tax.",
 
       // Right panel
       btnReset: "Reset",
@@ -1516,16 +1539,17 @@
     const nota = document.getElementById("nota-ish");
     if (!ubicacion || !nota) return;
     
+    const t = texts[currentLang] || texts.es;
     const estado = ubicacion.value;
     const tieneConvenio = CONVENIO_LISTA.includes(estado);
     
     if (estado === "OTRO") {
       nota.textContent = "";
     } else if (tieneConvenio) {
-      nota.innerHTML = "✅ Airbnb retiene y paga el ISH. No afecta tu ganancia.";
+      nota.innerHTML = t.notaIshConvenio;
       nota.style.color = "#4ade80";
     } else {
-      nota.innerHTML = "⚠️ Tú debes pagar el ISH al estado. Se resta de tu ganancia.";
+      nota.innerHTML = t.notaIshSinConvenio;
       nota.style.color = "#fbbf24";
     }
   }
@@ -1539,14 +1563,16 @@
   if (toggleDesgloseBtn) {
     toggleDesgloseBtn.addEventListener("click", function() {
       const wrapper = document.getElementById("desglose-wrapper");
+      const btnText = document.getElementById("btn-desglose-text");
+      const t = texts[currentLang] || texts.es;
       const isExpanded = wrapper.classList.contains("expanded");
       
       if (isExpanded) {
         wrapper.classList.remove("expanded");
-        this.textContent = "▼ Ver desglose completo";
+        if (btnText) btnText.textContent = t.btnDesglose;
       } else {
         wrapper.classList.add("expanded");
-        this.textContent = "▲ Ocultar desglose";
+        if (btnText) btnText.textContent = t.btnDesgloseOcultar;
       }
     });
   }
