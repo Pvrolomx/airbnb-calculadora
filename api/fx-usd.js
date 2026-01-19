@@ -19,6 +19,7 @@ module.exports = async (req, res) => {
   try {
     const token = process.env.BANXICO_TOKEN;
     if (!token) {
+      console.error('BANXICO_TOKEN no configurada');
       return res.status(500).json({ ok: false, error: 'No token configured' });
     }
 
@@ -37,14 +38,14 @@ module.exports = async (req, res) => {
     }
 
     const data = await response.json();
-    const serie = data && data.bmx && data.bmx.series && data.bmx.series[0];
-    const dato = serie && serie.datos && serie.datos[0];
+    const serie = data?.bmx?.series?.[0];
+    const dato = serie?.datos?.[0];
 
     if (!dato) {
       throw new Error('No data from Banxico');
     }
 
-    const rate = parseFloat(dato.dato.replace(',', '.'));
+    const rate = parseFloat(dato.dato.replace(',', ''));
     
     if (!Number.isFinite(rate)) {
       throw new Error('Invalid rate');
