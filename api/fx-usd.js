@@ -2,11 +2,15 @@
 // Endpoint para obtener tipo de cambio USD/MXN de Banxico
 // NO modifica fórmulas, solo provee datos de TC
 
-export default async function handler(req, res) {
+module.exports = async (req, res) => {
   // CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Cache-Control', 's-maxage=3600, stale-while-revalidate');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
 
   if (req.method !== 'GET') {
     return res.status(405).json({ ok: false, error: 'Method not allowed' });
@@ -33,14 +37,14 @@ export default async function handler(req, res) {
     }
 
     const data = await response.json();
-    const serie = data?.bmx?.series?.[0];
-    const dato = serie?.datos?.[0];
+    const serie = data && data.bmx && data.bmx.series && data.bmx.series[0];
+    const dato = serie && serie.datos && serie.datos[0];
 
     if (!dato) {
       throw new Error('No data from Banxico');
     }
 
-    const rate = parseFloat(dato.dato.replace(',', ''));
+    const rate = parseFloat(dato.dato.replace(',', '.'));
     
     if (!Number.isFinite(rate)) {
       throw new Error('Invalid rate');
@@ -57,4 +61,4 @@ export default async function handler(req, res) {
     console.error('FX Error:', error.message);
     return res.status(500).json({ ok: false, error: 'FX fetch failed' });
   }
-}
+};
