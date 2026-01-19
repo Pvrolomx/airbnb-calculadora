@@ -10,7 +10,8 @@
       "use": "@vercel/static"
     }
   ],
-  "rewrites": [
-    { "source": "/:path*", "destination": "/public/:path*" }
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/(.*)", "dest": "/public/$1" }
   ]
 }
