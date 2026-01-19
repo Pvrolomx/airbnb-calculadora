@@ -19,11 +19,10 @@ async function loadFxRate() {
 
 loadFxRate();
 
-// Labels
+// Labels - SOLO campos monetarios (noches NO es monetario)
 const inputLabels = {
   USD: {
     tarifa_noche: 'Nightly rate (USD)',
-    noches: 'Number of nights',
     tarifa_limpieza: 'Cleaning fee (USD)',
     gasto_limpieza_real: 'Actual cleaning cost (USD)',
     gasto_consumibles: 'Consumables/amenities (USD)',
@@ -31,7 +30,6 @@ const inputLabels = {
   },
   MXN: {
     tarifa_noche: 'Tarifa por noche (MXN)',
-    noches: 'Número de noches',
     tarifa_limpieza: 'Cargo de limpieza (MXN)',
     gasto_limpieza_real: 'Costo real de limpieza (MXN)',
     gasto_consumibles: 'Consumibles/amenidades (MXN)',
