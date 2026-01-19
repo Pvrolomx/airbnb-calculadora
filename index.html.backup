@@ -1,0 +1,1170 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <title>Calculadora de Hospedaje Mexico 2025 - Ganancia real por reserva</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Calcula cuanto te queda en plataformas de hospedaje considerando comisiones, gastos e impuestos. Regimenes fiscales Mexico.">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <meta property="og:image" content="https://airbnb-calculadora-vusx-2.vercel.app/og-image.svg">
+    <style>
+      :root {
+        color-scheme: dark;
+      }
+      .tooltip-icon{display:inline-block;width:16px;height:16px;background:#374151;color:#9ca3af;border-radius:50%;font-size:11px;text-align:center;line-height:16px;margin-left:6px;cursor:help;position:relative}
+      .tooltip-icon:hover{background:#22c55e;color:#fff}
+      .tooltip-icon:hover::after{content:attr(data-tip);position:absolute;bottom:24px;left:50%;transform:translateX(-50%);background:#1e293b;color:#e5e7eb;padding:8px 12px;border-radius:6px;font-size:12px;max-width:220px;white-space:normal;z-index:100;box-shadow:0 4px 12px rgba(0,0,0,.3);border:1px solid #374151}
+
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        background: #020617;
+        color: #e5e7eb;
+        display: flex;
+        min-height: 100vh;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 24px;
+      }
+
+      .app-shell {
+        width: 100%;
+        max-width: 1000px;
+        background: radial-gradient(circle at top, #0f172a, #020617 60%);
+        border-radius: 16px;
+        border: 1px solid #1f2937;
+        padding: 20px 20px 24px;
+        box-shadow: 0 18px 40px rgba(0, 0, 0, 0.7);
+      }
+
+      .app-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .app-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #f9fafb;
+      }
+
+      .app-subtitle {
+        font-size: 13px;
+        color: #9ca3af;
+      }
+
+      .lang-toggle {
+        border-radius: 999px;
+        border: 1px solid #4b5563;
+        padding: 3px 10px;
+        font-size: 12px;
+        background: #020617;
+        color: #e5e7eb;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .lang-toggle span.flag {
+        font-size: 14px;
+      }
+
+      .app-body {
+        display: grid;
+        grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+        gap: 16px;
+      }
+
+      @media (max-width: 800px) {
+        .app-body {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+
+      .card {
+        background: rgba(15, 23, 42, 0.9);
+        border-radius: 12px;
+        border: 1px solid #1f2937;
+        padding: 16px 16px 18px;
+      }
+
+      .card-title {
+        font-size: 14px;
+        font-weight: 600;
+        color: #f9fafb;
+        margin-bottom: 10px;
+      }
+
+      .input-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      @media (max-width: 600px) {
+        .input-grid {
+          grid-template-columns: minmax(0, 1fr);
+        }
+      }
+
+      .input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .input-label {
+        font-size: 12px;
+        color: #d1d5db;
+      }
+
+      .input-field {
+        border-radius: 8px;
+        border: 1px solid #374151;
+        background: #020617;
+        color: #f9fafb;
+        padding: 6px 8px;
+        font-size: 13px;
+      }
+
+      .input-field:focus {
+        outline: none;
+        border-color: #22c55e;
+        box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.4);
+      }
+
+      .actions-row {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        gap: 10px;
+        margin-top: 14px;
+      }
+
+      .btn-primary {
+        padding: 8px 14px;
+        border-radius: 999px;
+        border: none;
+        background: #22c55e;
+        color: #020617;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .btn-primary:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .btn-secondary {
+        padding: 8px 14px;
+        border-radius: 999px;
+        border: 1px solid #4b5563;
+        background: #020617;
+        color: #e5e7eb;
+        font-size: 13px;
+        cursor: pointer;
+      }
+
+      .result-row {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .result-item {
+        padding: 8px 10px;
+        border-radius: 8px;
+        background: #020617;
+        border: 1px solid #111827;
+      }
+
+      .result-label {
+        font-size: 11px;
+        color: #9ca3af;
+      }
+
+      .result-value {
+        font-size: 14px;
+        font-weight: 600;
+        margin-top: 2px;
+      }
+
+      .result-value.positive {
+        color: #22c55e;
+      }
+
+      .result-value.negative {
+        color: #f97373;
+      }
+
+      .disclaimer {
+        margin-top: 10px;
+        font-size: 11px;
+        color: #6b7280;
+      }
+
+      .disclaimer strong {
+        color: #e5e7eb;
+      }
+
+      .side-card-body {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .side-highlight {
+        padding: 10px;
+        border-radius: 8px;
+        background: #020617;
+        border: 1px dashed #4b5563;
+        font-size: 12px;
+        color: #d1d5db;
+      }
+
+      .side-highlight strong {
+        color: #22c55e;
+      }
+
+      .log-panel {
+        margin-top: 6px;
+        max-height: 130px;
+        overflow-y: auto;
+        font-size: 11px;
+        background: #020617;
+        border-radius: 8px;
+        border: 1px solid #111827;
+        padding: 6px 8px;
+        color: #9ca3af;
+        white-space: pre-line;
+      }
+
+      /* ======= PASTILLAS DE PLATAFORMA ======= */
+
+      .platform-group {
+        margin-bottom: 12px;
+      }
+
+      .platform-label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 12px;
+        color: #e5e7eb;
+      }
+
+      .platform-pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      .platform-pills input[type="radio"] {
+        display: none;
+      }
+
+      .platform-pills label {
+        padding: 5px 12px;
+        border-radius: 999px;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-weight: 500;
+        background: #22c55e;
+        border: 1px solid #22c55e;
+        color: white;
+        opacity: 0.3;
+      }
+
+      .platform-pills label:hover {
+        opacity: 0.6;
+        transform: scale(1.05);
+      }
+
+      .platform-pills input[type="radio"]:checked + label {
+        opacity: 1;
+        font-weight: 600;
+        box-shadow: 0 0 10px rgba(34,197,94,0.5);
+      }
+      /* ======= CURRENCY TOGGLE (USD/MXN) ======= */
+      .currency-toggle {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+
+      .currency-toggle input[type="radio"] {
+        display: none;
+      }
+
+      .currency-toggle label {
+        padding: 8px 20px;
+        border-radius: 999px;
+        background: #22c55e;
+        border: 1px solid #22c55e;
+        color: white;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-weight: 600;
+        font-size: 14px;
+        opacity: 0.3;
+      }
+
+      .currency-toggle label:hover {
+        opacity: 0.6;
+        transform: scale(1.05);
+      }
+
+      .currency-toggle input:checked + label {
+        opacity: 1;
+        box-shadow: 0 0 10px rgba(34,197,94,0.5);
+      }
+      /* Ocultar spinners en inputs numéricos */
+      input[type="number"]::-webkit-inner-spin-button,
+      input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+
+      input[type="number"] {
+        -moz-appearance: textfield;
+      }
+
+      /* Currency Toggle Styles */
+      .currency-toggle {
+        display: flex;
+        gap: 8px;
+      }
+
+      .currency-toggle input[type="radio"] {
+        display: none;
+      }
+
+      .currency-toggle label {
+        padding: 8px 24px;
+        border-radius: 999px;
+        border: 1px solid #4b5563;
+        background: #1e293b;
+        color: #e5e7eb;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .currency-toggle label:hover {
+        border-color: #3b82f6;
+        background: #334155;
+        transform: scale(1.05);
+      }
+
+      .currency-toggle input[type="radio"]:checked + label {
+        background: #3b82f6;
+        border-color: #3b82f6;
+        color: white;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+      }
+</style>
+    <script src="/credits.js?v=1734800000"></script>
+    <script src="/dual-currency.js?v=1766329419"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="app-header">
+        <div>
+          <div id="app-title" class="app-title">
+            Calculadora de reserva (estimación neta)
+          </div>
+          <div id="app-subtitle" class="app-subtitle">
+            Ingresa los datos de una reserva y descubre cuánto te queda después de comisiones y gastos.
+          </div>
+          <div id="credit-counter" style="margin-top:16px;padding:8px 16px;background:#10b981;color:white;border-radius:8px;font-size:14px;font-weight:700;text-align:center;display:inline-block;">
+            ⚡ 10 cálculos restantes
+          </div>
+        </div>
+        <button id="lang-toggle" class="lang-toggle" type="button">
+          <span class="flag">🇲🇽</span>
+          <span id="lang-toggle-text">ES</span>
+        </button>
+      </header>
+
+      <main class="app-body">
+        <!-- COLUMNA IZQUIERDA: FORM -->
+        <section class="card">
+          <div class="card-title" id="form-title">
+            Datos de la reserva
+          </div>
+
+          <form id="calc-form">
+            <!-- CURRENCY TOGGLE -->
+            <div class="currency-toggle" style="margin-bottom: 16px;">
+              <input type="radio" name="currency" id="curr-usd" value="USD" checked>
+              <label for="curr-usd">🇺🇸 USD</label>
+              <input type="radio" name="currency" id="curr-mxn" value="MXN">
+              <label for="curr-mxn">🇲🇽 MXN</label>
+            </div>
+
+            <!-- PLATAFORMA -->
+            <div class="platform-group">
+              <span id="label-platform" class="platform-label">
+                Plataforma / canal de reserva
+              </span>
+              <div class="platform-pills">
+                <input
+                  type="radio"
+                  name="plataforma"
+                  id="plat-airbnb"
+                  value="AIRBNB"
+                  checked
+                />
+                <label for="plat-airbnb">Airbnb 3%</label>
+
+                <input
+                  type="radio"
+                  name="plataforma"
+                  id="plat-airbnb-simplified"
+                  value="AIRBNB_SIMPLIFIED"
+                />
+                <label for="plat-airbnb-simplified">Airbnb 15.5%</label>
+
+                <input
+                  type="radio"
+                  name="plataforma"
+                  id="plat-vrbo"
+                  value="VRBO"
+                />
+                <label for="plat-vrbo">Vrbo</label>
+
+                <input
+                  type="radio"
+                  name="plataforma"
+                  id="plat-booking"
+                  value="BOOKING"
+                />
+                <label for="plat-booking">Booking.com</label>
+
+                <input
+                  type="radio"
+                  name="plataforma"
+                  id="plat-otra"
+                  value="OTRA"
+                />
+                <label for="plat-otra">Otra</label>
+              </div>
+            </div>
+
+            <div class="input-grid">
+              <div class="input-group">
+                <label class="input-label" id="label-tarifa-noche" for="tarifa_noche"><span class="tooltip-icon" data-tip="Precio antes de comisiones">?</span> 
+                  Tarifa por noche
+                </label>
+                <input
+                  id="tarifa_noche"
+                  class="input-field"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value=""
+                />
+              </div>
+
+              <div class="input-group">
+                <label class="input-label" id="label-noches" for="noches">
+                  Noches
+                </label>
+                <input
+                  id="noches"
+                  class="input-field"
+                  type="number"
+                  min="1"
+                  step="1"
+                  value=""
+                />
+              </div>
+
+              <div class="input-group">
+                <label class="input-label" id="label-tarifa-limpieza" for="tarifa_limpieza"><span class="tooltip-icon" data-tip="Cargo al huesped por limpieza">?</span> 
+                  Tarifa de limpieza cobrada
+                </label>
+                <input
+                  id="tarifa_limpieza"
+                  class="input-field"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value=""
+                />
+              </div>
+
+              <div class="input-group">
+                <label class="input-label" id="label-regimen" for="regimen_fiscal"><span class="tooltip-icon" data-tip="Define como se estiman impuestos">?</span> 
+                  Régimen fiscal (aprox.)
+                </label>
+                <select id="regimen_fiscal" class="input-field">
+                  <option id="opt-regimen-sinrfc" value="SIN_RFC">No RFC / plataforma retiene</option>
+                  <option id="opt-regimen-resico" value="RESICO" selected>Régimen Simplificado de Confianza (RESICO)</option>
+                  <option id="opt-regimen-actividad" value="ACTIVIDAD_EMPRESARIAL">Actividad empresarial</option>
+                </select>
+              </div>
+
+              <div class="input-group">
+                <label class="input-label" id="label-gasto-limpieza" for="gasto_limpieza_real"><span class="tooltip-icon" data-tip="Tu costo real de limpieza">?</span> 
+                  Gasto real de limpieza
+                </label>
+                <input
+                  id="gasto_limpieza_real"
+                  class="input-field"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value=""
+                />
+              </div>
+
+              <div class="input-group">
+                <label class="input-label" id="label-gasto-consumibles" for="gasto_consumibles"><span class="tooltip-icon" data-tip="Cafe, jabon, amenities">?</span> 
+                  Gasto en consumibles
+                </label>
+                <input
+                  id="gasto_consumibles"
+                  class="input-field"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value=""
+                />
+              </div>
+
+              <div class="input-group">
+                <label class="input-label" id="label-gasto-otras" for="gasto_comisiones_otras"><span class="tooltip-icon" data-tip="Comisiones extra, mantenimiento">?</span> 
+                  Otras comisiones / gastos
+                </label>
+                <input
+                  id="gasto_comisiones_otras"
+                  class="input-field"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  value=""
+                />
+              </div>
+            </div>
+
+
+            <div class="actions-row" style="display:flex;gap:10px;align-items:center;">
+              <button id="btn-calcular" class="btn-primary" type="submit">
+                <span id="btn-calcular-text">Calcular estimado</span>
+              </button>
+              <button id="btn-reset" type="button" onclick="localStorage.clear();location.reload();" style="padding:10px 16px;background:#64748b;color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;">🔄 <span id="btn-reset-text">Reset</span></button>
+            </div>
+
+          <div id="results" class="result-row" style="display: none">
+            <div class="result-item">
+              <div class="result-label" id="res-label-ingreso-bruto">
+                Ingreso bruto (reserva)
+              </div>
+              <div
+                id="res-ingreso-bruto"
+                class="result-value"
+              >
+                —
+              </div>
+            </div>
+
+            <div class="result-item">
+              <div class="result-label" id="res-label-comision">
+                Comisión plataforma (estimada)
+              </div>
+              <div
+                id="res-comision"
+                class="result-value"
+              >
+                —
+              </div>
+            </div>
+
+            <div class="result-item">
+              <div class="result-label" id="res-label-gastos">
+                Gastos directos reserva
+              </div>
+              <div
+                id="res-gastos"
+                class="result-value"
+              >
+                —
+              </div>
+            </div>
+
+            <div class="result-item">
+              <div class="result-label" id="res-label-impuestos">
+                Impuesto estimado (aprox.)
+              </div>
+              <div
+                id="res-impuestos"
+                class="result-value"
+              >
+                —
+              </div>
+            </div>
+
+            <div class="result-item">
+              <div class="result-label" id="res-label-ganancia-neta">
+                Ganancia neta estimada
+              </div>
+              <div
+                id="res-ganancia-neta"
+                class="result-value positive"
+              >
+                —
+              </div>
+            </div>
+          </div>
+
+<!-- Bloque opcional de reporte PDF -->
+<div
+  style="
+    margin-top: 16px;
+    padding: 16px 20px;
+    border-radius: 12px;
+    background: #020617;
+    border: 1px solid #1f2937;
+  "
+>
+  <h3 id="pdf-title" style="margin: 0 0 8px 0; font-size: 1.05rem;">
+    Reporte PDF opcional
+  </h3>
+
+  <p
+    id="pdf-subtitle"
+    style="margin: 0 0 12px 0; font-size: 0.9rem; color: #9ca3af;"
+  >
+    Si quieres guardar o compartir este cálculo, puedes generar un reporte PDF de este hospedaje.
+  </p>
+
+  <button
+    id="btnComprarReporte"
+    style="
+      width: 100%;
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: none;
+      font-weight: 600;
+      background-color: #22c55e;
+      color: #ffffff;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 12px;
+    "
+  >
+    Comprar 10 cálculos — $10 MXN
+  </button>
+
+  <button
+    id="btnDescargarPDF"
+    style="
+      width: 100%;
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid #3b82f6;
+      background: transparent;
+      color: #3b82f6;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 16px;
+      margin-top: 8px;
+    "
+  >
+    📄 Download PDF Report
+  </button>
+
+
+</div>
+<!-- Fin bloque reporte PDF -->
+
+          <div class="disclaimer" id="disclaimer-text" style="margin-top: 24px; padding: 16px; background: #1f2937; border-left: 4px solid #3b82f6; border-radius: 8px; font-size: 14px; line-height: 1.6;">
+            <strong style="color: #60a5fa;">Importante:</strong> Esta herramienta ofrece cálculos
+            aproximados con fines informativos. No constituye asesoría fiscal,
+            contable ni legal.
+            <br><br>
+            <strong style="color: #fbbf24;">Tasas fiscales:</strong> Los porcentajes de impuestos son estimaciones.
+            Actividad Empresarial usa 30% aproximado (la tabla real del ISR varía entre 1.92%-35%).
+            Consulte a un contador para cálculo exacto según su situación fiscal específica.
+          </div>
+        </section>
+
+        <!-- COLUMNA DERECHA: INFO / LOG -->
+        <aside class="card">
+          <div class="card-title" id="side-title">
+            Qué hace esta herramienta
+          </div>
+          <div class="side-card-body">
+            <div class="side-highlight" id="side-highlight-text">
+              Calcula, para una sola reserva, una estimación de:
+              <br />
+              • Ingreso bruto<br />
+              • Comisión de la plataforma (según selección)<br />
+              • Gastos directos que ingresas<br />
+              • Impuesto aproximado con tasa fija<br />
+              • Ganancia neta estimada
+            </div>
+
+            <div class="side-highlight" id="side-platform-note">
+              <strong>Nota de plataforma:</strong><br />
+              • Airbnb: 3% (aprox. comisión host)<br />
+              • Vrbo: 8% (aprox.)<br />
+              • Booking.com: 15% (aprox.)<br />
+              • Otra: 0% (puedes ajustar en backend)
+            </div>
+
+          </div>
+        </aside>
+      </main>
+    </div>
+
+<script>
+  // ========= CLIENT-SIDE CALCULATION =========
+  const COMISIONES_PLATAFORMA = {
+    AIRBNB: 0.03,
+    AIRBNB_SIMPLIFIED: 0.155,
+    VRBO: 0.08,
+    BOOKING: 0.15,
+    OTRA: 0.03
+  };
+
+  function calcularReservaLocal(input) {
+    const {
+      tarifa_noche, noches, tarifa_limpieza, regimen_fiscal,
+      gasto_limpieza_real, gasto_consumibles, gasto_comisiones_otras, plataforma
+    } = input;
+
+    const tasa_comision = COMISIONES_PLATAFORMA[plataforma] || 0.03;
+    const ingreso_bruto_reserva = (tarifa_noche * noches) + tarifa_limpieza;
+    const comision_airbnb_reserva = ingreso_bruto_reserva * tasa_comision;
+    const ingreso_neto_airbnb = ingreso_bruto_reserva - comision_airbnb_reserva;
+    const gastos_reserva = gasto_limpieza_real + gasto_consumibles + gasto_comisiones_otras;
+
+    let tasa_impuesto = 0;
+    if (regimen_fiscal === "NO_RFC") tasa_impuesto = 0.25;
+    if (regimen_fiscal === "RESICO") tasa_impuesto = 0.025;
+    if (regimen_fiscal === "ACTIVIDAD_EMPRESARIAL") tasa_impuesto = 0.3;
+
+    let base_impuestos = ingreso_neto_airbnb - gastos_reserva;
+    if (base_impuestos < 0) base_impuestos = 0;
+
+    const impuestos_estimados_reserva = Math.round(base_impuestos * tasa_impuesto * 100) / 100;
+    const ganancia_neta_reserva = Math.round((ingreso_neto_airbnb - gastos_reserva - impuestos_estimados_reserva) * 100) / 100;
+
+    return {
+      ingreso_bruto_reserva: Math.round(ingreso_bruto_reserva * 100) / 100,
+      comision_airbnb_reserva: Math.round(comision_airbnb_reserva * 100) / 100,
+      ingreso_neto_airbnb: Math.round(ingreso_neto_airbnb * 100) / 100,
+      gastos_reserva: Math.round(gastos_reserva * 100) / 100,
+      base_impuestos: Math.round(base_impuestos * 100) / 100,
+      impuestos_estimados_reserva,
+      ganancia_neta_reserva
+    };
+  }
+  // ========= END CLIENT-SIDE CALCULATION =========
+
+  // ========= Textos ES / EN =========
+  const texts = {
+    es: {
+      // Título y subtítulo
+      title: "¿Cuánto ganas por tu hospedaje?",
+      subtitle: "Calculadora de ganancias por hospedaje",
+      tagline: "Ve cuánto te queda realmente por cada reserva",
+
+      // Formulario principal
+      formTitle: "Datos del hospedaje",
+      labelPlatform: "¿Dónde se hizo la reserva?",
+      labelTarifaNoche: "Precio por noche que paga el huésped",
+      labelNoches: "Número de noches",
+      labelTarifaLimpieza: "Cargo de limpieza al huésped",
+      labelRegimen: "Régimen fiscal (aprox.)",
+      labelGastoLimpieza: "Lo que realmente pagas por limpieza",
+      labelGastoConsumibles: "Amenidades e insumos (café, jabón, etc.)",
+      labelGastoOtras: "Otros gastos de esta reserva",
+      btnCalcular: "Ver cuánto me queda",
+
+      // Resultados
+      resIngresoBruto: "Ingreso bruto (reserva)",
+      resComision: "Comisión plataforma (estimada)",
+      resGastos: "Gastos directos reserva",
+      resImpuestos: "Impuesto estimado (aprox.)",
+      resGananciaNeta: "Ganancia neta estimada",
+
+      // Opciones del select de régimen
+      regimenOptionSinRfc: "No RFC / plataforma retiene",
+      regimenOptionResico: "Régimen Simplificado de Confianza (RESICO)",
+      regimenOptionActividad: "Actividad empresarial",
+
+      // Bloque PDF
+      pdfTitle: "Reporte PDF opcional",
+      pdfSubtitle:
+        "Si quieres guardar o compartir este cálculo, puedes generar un reporte PDF de este hospedaje.",
+      pdfButton: "Comprar 10 cálculos — $10 MXN",
+      pdfStripeNote:
+        "Cada cálculo genera un reporte descargable en PDF. Pago procesado con Stripe. Herramienta informativa, no sustituye asesoría contable.",
+      
+      btnReset: "Reiniciar",
+      // Panel derecho
+      sideTitle: "Qué hace esta herramienta",
+      sideHighlightHtml:
+        "Calcula, para una sola reserva, una estimación de:<br />" +
+        "• Total que paga el huésped<br />" +
+        "• Comisión de la plataforma (según selección)<br />" +
+        "• Gastos directos de la reserva<br />" +
+        "• Impuesto aproximado con tasa fija<br />" +
+        "• Lo que te queda de ganancia",
+      sidePlatformNoteHtml:
+        "<strong>Nota de plataforma:</strong><br />" +
+        "• Airbnb: 3% (aprox. comisión host)<br />" +
+        "• Vrbo: 8% (aprox.)<br />" +
+        "• Booking.com: 15% (aprox.)<br />" +
+        "• Otra: 0% (puedes ajustar en backend)",
+      sideLogTitle: "Log de cálculo (últimas ejecuciones)",
+
+      // Disclaimer general
+      disclaimerHtml:
+        "<strong>Importante:</strong> Esta herramienta ofrece cálculos aproximados con fines informativos. No constituye asesoría fiscal, contable ni legal.",
+    },
+
+    en: {
+      // Title + subtitle
+      title: "How much do you earn from your reservation?",
+      subtitle: "Booking profit calculator.",
+      tagline: "See what you really keep from each booking.",
+
+      // Form
+      formTitle: "Booking details",
+      labelPlatform: "Where was the booking made?",
+      labelTarifaNoche: "Nightly price paid by the guest",
+      labelNoches: "Number of nights",
+      labelTarifaLimpieza: "Cleaning fee charged to the guest",
+      labelRegimen: "Tax category (approx.)",
+      labelGastoLimpieza: "Actual cleaning cost you pay",
+      labelGastoConsumibles: "Supplies & amenities (coffee, soap, etc.)",
+      labelGastoOtras: "Other booking-related costs",
+      btnCalcular: "See my net earnings",
+
+      // Results
+      resIngresoBruto: "Gross income (booking)",
+      resComision: "Platform commission (estimated)",
+      resGastos: "Direct booking expenses",
+      resImpuestos: "Estimated tax (approx.)",
+      resGananciaNeta: "Estimated net income",
+
+      // Select options
+      regimenOptionSinRfc: "No tax ID (No RFC) / platform withholds",
+      regimenOptionResico: "Simplified Trust Regime (RESICO)",
+      regimenOptionActividad: "Business activity",
+
+      // PDF block
+      pdfTitle: "Optional PDF report",
+      pdfSubtitle: "If you want to save or share this calculation, you can generate a PDF report for this stay.",
+      pdfSectionDescription:
+         "Save and share calculations (optional).",
+      pdfButton: "Buy 10 calculations — $10 MXN",
+      pdfStripeNote:
+        "Each calculation includes a downloadable PDF report. Payments are processed via Stripe. This is an informational tool and does not replace accounting advice.",
+
+      // Right panel
+      btnReset: "Reset",
+      sideTitle: "What this tool does",
+      sideHighlightHtml:
+        "For a single booking, it estimates:<br />" +
+        "• Total paid by the guest<br />" +
+        "• Platform commission (based on selection)<br />" +
+        "• Direct booking expenses you enter<br />" +
+        "• Approx. tax with a fixed rate<br />" +
+        "• What you keep as profit",
+      sidePlatformNoteHtml:
+        "<strong>Platform note:</strong><br />" +
+        "• Airbnb: 3% (approx. host fee)<br />" +
+        "• Vrbo: 8% (approx.)<br />" +
+        "• Booking.com: 15% (approx.)<br />" +
+        "• Other: 0% (you can tweak this in the backend)",
+      sideLogTitle: "Calculation log (last runs)",
+
+      // Disclaimer
+      disclaimerHtml:
+        "<strong>Important:</strong> This tool provides approximate calculations for informational purposes only. It does not constitute tax, accounting, or legal advice.",
+    },
+  };
+
+  function applyLang(lang) {
+    currentLang = lang;
+    const t = texts[lang];
+    document.documentElement.lang = lang;
+
+    // Título principal
+    const appTitleEl = document.getElementById("app-title");
+    if (appTitleEl) appTitleEl.textContent = t.title;
+
+    const appSubtitleEl = document.getElementById("app-subtitle");
+    if (appSubtitleEl) appSubtitleEl.textContent = t.subtitle;
+
+    // Formulario
+    const formTitleEl = document.getElementById("form-title");
+    if (formTitleEl) formTitleEl.textContent = t.formTitle;
+
+    const setText = (id, value) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = value;
+    };
+
+    setText("label-platform", t.labelPlatform);
+    setText("label-tarifa-noche", t.labelTarifaNoche);
+    setText("label-noches", t.labelNoches);
+    setText("label-tarifa-limpieza", t.labelTarifaLimpieza);
+    setText("label-regimen", t.labelRegimen);
+    setText("label-gasto-limpieza", t.labelGastoLimpieza);
+    setText("label-gasto-consumibles", t.labelGastoConsumibles);
+    setText("label-gasto-otras", t.labelGastoOtras);
+    setText("btn-calcular-text", t.btnCalcular);
+
+    // Resultados
+    setText("res-label-ingreso-bruto", t.resIngresoBruto);
+    setText("res-label-comision", t.resComision);
+    setText("res-label-gastos", t.resGastos);
+    setText("res-label-impuestos", t.resImpuestos);
+    setText("res-label-ganancia-neta", t.resGananciaNeta);
+
+    // Opciones del select
+    setText("opt-regimen-sinrfc", t.regimenOptionSinRfc);
+    setText("opt-regimen-resico", t.regimenOptionResico);
+    setText("opt-regimen-actividad", t.regimenOptionActividad);
+
+    // Bloque PDF
+    setText("pdf-section-title", t.pdfSectionTitle);
+    setText("pdf-section-description", t.pdfSectionDescription);
+    setText("btnComprarReporte", t.pdfButton);
+    setText("pdf-stripe-note", t.pdfStripeNote);
+    setText("btn-reset-text", t.btnReset);
+
+    // Panel derecho
+    setText("side-title", t.sideTitle);
+
+    const sideHighlightEl = document.getElementById("side-highlight-text");
+    if (sideHighlightEl) sideHighlightEl.innerHTML = t.sideHighlightHtml;
+
+    const sidePlatformEl = document.getElementById("side-platform-note");
+    if (sidePlatformEl) sidePlatformEl.innerHTML = t.sidePlatformNoteHtml;
+
+    setText("side-log-title", t.sideLogTitle);
+
+    // Disclaimer
+    const disclaimerEl = document.getElementById("disclaimer-text");
+    if (disclaimerEl) disclaimerEl.innerHTML = t.disclaimerHtml;
+
+    // PDF block
+    setText("pdf-title", t.pdfTitle);
+    setText("pdf-subtitle", t.pdfSubtitle);
+    setText("btnComprarReporte", t.pdfButton);
+    setText("pdf-stripe-note", t.pdfStripeNote);
+
+    // Botón de idioma
+    const langToggleText = document.getElementById("lang-toggle-text");
+    const langToggleFlag = document.querySelector("#lang-toggle .flag");
+    if (lang === "es") {
+      if (langToggleText) langToggleText.textContent = "ES";
+      if (langToggleFlag) langToggleFlag.textContent = "🇲🇽";
+    } else {
+      if (langToggleText) langToggleText.textContent = "EN";
+      if (langToggleFlag) langToggleFlag.textContent = "🇺🇸";
+    }
+  }
+
+  // Toggle ES/EN
+  const langToggle = document.getElementById("lang-toggle");
+  if (langToggle) {
+    langToggle.addEventListener("click", () => {
+      currentLang = currentLang === "es" ? "en" : "es";
+      localStorage.setItem("lang", currentLang);
+      applyLang(currentLang);
+      // Trigger update en credits.js
+      if(window.updateDisplay) window.updateDisplay();
+    });
+  }
+
+  // Cargar idioma guardado o defaultear a ES
+  const savedLang = localStorage.getItem("lang") || "es";
+  currentLang = savedLang;
+  applyLang(savedLang);
+
+  // ========= Lógica de cálculo / API =========
+
+  function buildInputFromForm() {
+    const plataformaInput = document.querySelector(
+      'input[name="plataforma"]:checked'
+    );
+    const plataforma = plataformaInput ? plataformaInput.value : "AIRBNB";
+
+    return {
+      tarifa_noche: Number(
+        document.getElementById("tarifa_noche").value || 0
+      ),
+      noches: Number(document.getElementById("noches").value || 0),
+      tarifa_limpieza: Number(
+        document.getElementById("tarifa_limpieza").value || 0
+      ),
+      regimen_fiscal: document.getElementById("regimen_fiscal").value,
+      gasto_limpieza_real: Number(
+        document.getElementById("gasto_limpieza_real").value || 0
+      ),
+      gasto_consumibles: Number(
+        document.getElementById("gasto_consumibles").value || 0
+      ),
+      gasto_comisiones_otras: Number(
+        document.getElementById("gasto_comisiones_otras").value || 0
+      ),
+      plataforma,
+    };
+  }
+
+  function appendLog(message) {
+    const panel = document.getElementById("log-panel");
+    if (!panel) return;
+    const now = new Date().toLocaleTimeString();
+    panel.textContent = `[${now}] ${message}\n` + (panel.textContent || "");
+  }
+// Helper: Agregar equivalente en USD
+  async function addUsd(mxnAmount, elementId) {
+    try {
+      const response = await fetch('/fx-usd');
+      const data = await response.json();
+      if (!data.ok || !data.rate) return;
+      
+      const usd = (mxnAmount / data.rate).toFixed(2);
+      const element = document.getElementById(elementId);
+      
+      if (element && element.textContent) {
+        element.textContent += ' (~' + usd + ' USD)';
+      }
+    } catch (error) {
+      console.error('Error FX:', error);
+    }
+  }
+  
+  async function addUsd(m,e){try{const r=await fetch("/fx-usd");const d=await r.json();if(d.ok){const el=document.getElementById(e);if(el)el.textContent+=" (~"+(m/d.rate).toFixed(2)+" USD)";}}catch(x){}}
+
+  const formEl = document.getElementById("calc-form");
+  const btnCalcular = document.getElementById("btn-calcular");
+
+  if (formEl) {
+    formEl.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      let payload = buildInputFromForm();
+      payload = convertFormToMXN(payload);
+      if (btnCalcular) btnCalcular.disabled = true;
+      appendLog("Calculando...");
+
+      // Validate inputs FIRST (before using credit)
+      if (!payload.tarifa_noche || payload.tarifa_noche <= 0 || !payload.noches || payload.noches < 1) {
+        alert("Por favor ingresa la tarifa por noche y número de noches.");
+        if (btnCalcular) btnCalcular.disabled = false;
+        return;
+      }
+
+      try {
+        if (!useCredit()) {
+          return;
+        }
+
+        const r = calcularReservaLocal(payload);
+        appendLog("Cálculo exitoso.");
+        document.getElementById("res-ingreso-bruto").textContent =
+          r.ingreso_bruto_reserva.toFixed(2) + " MXN";
+        document.getElementById("res-comision").textContent =
+          r.comision_airbnb_reserva.toFixed(2) + " MXN";
+        document.getElementById("res-gastos").textContent =
+          r.gastos_reserva.toFixed(2) + " MXN";
+        document.getElementById("res-impuestos").textContent =
+          r.impuestos_estimados_reserva.toFixed(2) + " MXN";
+        
+        let lang = localStorage.getItem("lang") || "es";
+
+        applyLang(currentLang);
+
+        const netEl = document.getElementById("res-ganancia-neta");
+        netEl.textContent =
+          r.ganancia_neta_reserva.toFixed(2) + " MXN";
+        netEl.classList.remove("positive", "negative");
+
+        // Agregar equivalentes en USD
+        await formatDual(r.ingreso_bruto_reserva, "res-ingreso-bruto");
+        await formatDual(r.comision_airbnb_reserva, "res-comision");
+        await formatDual(r.gastos_reserva, "res-gastos");
+        await formatDual(r.impuestos_estimados_reserva, "res-impuestos");
+        await formatDual(r.ganancia_neta_reserva, "res-ganancia-neta");
+        netEl.classList.remove("positive", "negative");
+        netEl.classList.add(
+          r.ganancia_neta_reserva >= 0 ? "positive" : "negative"
+        );
+
+        document.getElementById("results").style.display = "grid";
+      } catch (err) {
+        console.error(err);
+        appendLog("Error en el cálculo: " + err.message);
+        alert("Error en el cálculo. Revisa los datos ingresados.");
+      } finally {
+        if (btnCalcular) btnCalcular.disabled = false;
+      }
+    });
+  }
+
+  // === Botón "Desbloquear 10 cálculos" (Stripe Checkout) ===
+  const btnComprarReporte = document.getElementById("btnComprarReporte");
+
+  if (btnComprarReporte) {
+    btnComprarReporte.addEventListener("click", async () => {
+      try {
+        let payload = buildInputFromForm();
+      payload = convertFormToMXN(payload);
+
+        const resp = await fetch("/api/crear-sesion", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+
+        const data = await resp.json();
+
+        if (!data.ok || !data.url) {
+          alert(
+            data.error ||
+              "No se pudo iniciar el pago para el reporte PDF."
+          );
+          return;
+        }
+
+        window.location.href = data.url;
+      } catch (err) {
+        console.error("Error al crear sesión de Stripe:", err);
+        alert(
+          "Hubo un problema al iniciar el pago. Intenta de nuevo en unos momentos."
+        );
+      }
+    });
+  }
+</script>
+    <script src="pdf-generator.js"></script>
+</body>
+</html>
