@@ -1117,7 +1117,7 @@
       pdfTitle: "Reporte PDF opcional",
       pdfSubtitle:
         "Si quieres guardar o compartir este cálculo, puedes generar un reporte PDF de este hospedaje.",
-      pdfButton: "Comprar 10 cálculos — $10 MXN",
+      pdfButton: "💳 Comprar 10 cálculos — $10 MXN",
       pdfStripeNote:
         "Cada cálculo genera un reporte descargable en PDF. Pago procesado con Stripe. Herramienta informativa, no sustituye asesoría contable.",
       
@@ -1191,7 +1191,7 @@
       pdfSubtitle: "If you want to save or share this calculation, you can generate a PDF report for this stay.",
       pdfSectionDescription:
          "Save and share calculations (optional).",
-      pdfButton: "Buy 10 calculations — $10 MXN",
+      pdfButton: "💳 Buy 10 calculations — $10 MXN",
       pdfStripeNote:
         "Each calculation includes a downloadable PDF report. Payments are processed via Stripe. This is an informational tool and does not replace accounting advice.",
 
@@ -1539,7 +1539,8 @@
   if (btnComprarReporte) {
     btnComprarReporte.addEventListener("click", () => {
       // Stripe Payment Link directo - $10 MXN por 10 cálculos
-      window.location.href = "https://buy.stripe.com/test_dRmaEZdak0Rg4Kv3oi3VC00";
+      // Abre en nueva pestaña para no perder el estado actual
+      window.open("https://buy.stripe.com/test_dRmaEZdak0Rg4Kv3VC00", "_blank");
     });
   }
 
