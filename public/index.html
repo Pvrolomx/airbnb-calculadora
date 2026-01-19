@@ -12,11 +12,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Anfitrión MX">
-    <meta property="og:title" content="Anfitrión MX - Calcula tu ganancia real">
-    <meta property="og:description" content="Calcula cuánto realmente ganas con Airbnb en México. Incluye comisiones, ISR, IVA y todos los impuestos.">
-    <meta property="og:type" content="website">
-    <meta property="og:image" content="https://airbnb-calculadora.vercel.app/og-image.svg">
-    <meta name="keywords" content="airbnb, calculadora, mexico, impuestos, isr, iva, anfitrion, host, vrbo, booking">
+    <meta property="og:image" content="https://airbnb-calculadora-vusx-2.vercel.app/og-image.svg">
     <style>
       :root {
         color-scheme: dark;
@@ -396,7 +392,77 @@
         color: white;
         box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
       }
-</style>
+
+      /* ======= RESULTADO PRINCIPAL (GANANCIA NETA HERO) ======= */
+      .resultado-hero {
+        background: linear-gradient(135deg, #0f172a 0%, #020617 100%);
+        border: 2px solid #10b981;
+        border-radius: 16px;
+        padding: 1.5rem;
+        text-align: center;
+        margin: 1rem 0;
+        display: none;
+      }
+      
+      .resultado-hero.visible {
+        display: block;
+      }
+
+      .ganancia-label {
+        font-size: 1rem;
+        color: #9ca3af;
+        display: block;
+        margin-bottom: 0.5rem;
+      }
+
+      .ganancia-monto {
+        font-size: 2.25rem;
+        font-weight: 700;
+        color: #10b981;
+        line-height: 1.2;
+      }
+
+      .ganancia-monto .moneda {
+        font-size: 1rem;
+        color: #9ca3af;
+        margin-left: 0.25rem;
+      }
+
+      .ganancia-usd {
+        font-size: 0.95rem;
+        color: #6b7280;
+        margin-top: 0.25rem;
+      }
+
+      .btn-desglose {
+        background: transparent;
+        border: 1px solid #374151;
+        color: #9ca3af;
+        padding: 0.6rem 1.25rem;
+        border-radius: 8px;
+        cursor: pointer;
+        margin-top: 1rem;
+        transition: all 0.2s;
+        font-size: 0.9rem;
+      }
+
+      .btn-desglose:hover {
+        border-color: #10b981;
+        color: #10b981;
+      }
+
+      /* Desglose colapsable */
+      .desglose-wrapper {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+      }
+
+      .desglose-wrapper.expanded {
+        max-height: 2000px;
+      }
+
+    </style>
     <script src="/credits.js?v=1734800000"></script>
     <script src="/dual-currency.js?v=1766329419"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -639,6 +705,27 @@
               <button id="btn-reset" type="button" onclick="localStorage.clear();location.reload();" style="padding:10px 16px;background:#64748b;color:white;border:none;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;">🔄 <span id="btn-reset-text">Reiniciar</span></button>
             </div>
 
+          
+          <!-- RESULTADO PRINCIPAL - Ganancia neta prominente -->
+          <div id="resultado-principal" class="resultado-hero">
+            <div class="ganancia-container">
+              <span class="ganancia-label">💰 Tu ganancia neta</span>
+              <div class="ganancia-monto">
+                <span id="ganancia-hero-mxn">$0.00</span>
+                <span class="moneda">MXN</span>
+              </div>
+              <div class="ganancia-usd">
+                ≈ <span id="ganancia-hero-usd">$0.00</span> USD
+              </div>
+            </div>
+            
+            <button id="toggle-desglose" class="btn-desglose" type="button">
+              ▼ Ver desglose completo
+            </button>
+          </div>
+
+          <!-- DESGLOSE COLAPSABLE -->
+          <div id="desglose-wrapper" class="desglose-wrapper">
           <div id="results" class="result-row" style="display: none">
             <div class="result-item">
               <div class="result-label" id="res-label-ingreso-bruto">
@@ -736,6 +823,7 @@
               </div>
             </div>
           </div>
+          </div><!-- fin desglose-wrapper -->
 
 <!-- Bloque opcional de reporte PDF -->
 <div
@@ -1354,6 +1442,21 @@
           r.ganancia_neta_reserva >= 0 ? "positive" : "negative"
         );
 
+        // Mostrar PRIMERO el resultado principal (ganancia neta hero)
+        const gananciaMXN = r.ganancia_neta_reserva.toFixed(2);
+        const gananciaUSD = (r.ganancia_neta_reserva / fxRate).toFixed(2);
+        document.getElementById("ganancia-hero-mxn").textContent = "$" + parseFloat(gananciaMXN).toLocaleString('en-US', {minimumFractionDigits: 2});
+        document.getElementById("ganancia-hero-usd").textContent = "$" + parseFloat(gananciaUSD).toLocaleString('en-US', {minimumFractionDigits: 2});
+        
+        const heroEl = document.getElementById("resultado-principal");
+        heroEl.classList.add("visible");
+        
+        // Scroll suave al resultado
+        setTimeout(() => {
+          heroEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+        
+        // Mostrar desglose (pero colapsado por default)
         document.getElementById("results").style.display = "grid";
       } catch (err) {
         console.error(err);
@@ -1403,6 +1506,23 @@
   // Actualizar nota al cargar y al cambiar
   document.getElementById("ubicacion_hospedaje")?.addEventListener("change", actualizarNotaISH);
   actualizarNotaISH(); // Ejecutar al cargar
+
+  // === Toggle Desglose ===
+  const toggleDesgloseBtn = document.getElementById("toggle-desglose");
+  if (toggleDesgloseBtn) {
+    toggleDesgloseBtn.addEventListener("click", function() {
+      const wrapper = document.getElementById("desglose-wrapper");
+      const isExpanded = wrapper.classList.contains("expanded");
+      
+      if (isExpanded) {
+        wrapper.classList.remove("expanded");
+        this.textContent = "▼ Ver desglose completo";
+      } else {
+        wrapper.classList.add("expanded");
+        this.textContent = "▲ Ocultar desglose";
+      }
+    });
+  }
 </script>
     <script src="pdf-generator.js?v=1736200000"></script>
 <script>
