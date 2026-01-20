@@ -70,13 +70,28 @@ function recopilarFormulario() {
 }
 
 // --- Función para mostrar resultados en pantalla ---
+// MODIFICADA: Ahora usa formatDualAmount() de dual-currency.js
 function mostrarResultado(result) {
   const out = document.getElementById("resultado");
   if (!out) return;
 
+  // Los resultados del backend vienen en MXN
+  // formatDualAmount() se encarga de mostrar en la moneda correcta
+  const gananciaHTML = typeof formatDualAmount === 'function' 
+    ? formatDualAmount(parseFloat(result.ganancia_neta_reserva))
+    : `$${result.ganancia_neta_reserva} MXN`;
+  
+  const baseHTML = typeof formatDualAmount === 'function'
+    ? formatDualAmount(parseFloat(result.base_impuestos))
+    : `$${result.base_impuestos} MXN`;
+
+  const titleText = currentCurrency === 'USD' ? 'Estimated Results' : 'Resultados estimados';
+  const netLabel = currentCurrency === 'USD' ? 'Net earnings:' : 'Ganancia neta:';
+  const taxLabel = currentCurrency === 'USD' ? 'Tax base:' : 'Base impuestos:';
+
   out.innerHTML = `
-    <h3>Resultados estimados</h3>
-    <p><strong>Ganancia neta:</strong> ${result.ganancia_neta_reserva} MXN</p>
-    <p><strong>Base impuestos:</strong> ${result.base_impuestos} MXN</p>
+    <h3>${titleText}</h3>
+    <p><strong>${netLabel}</strong><br>${gananciaHTML}</p>
+    <p><strong>${taxLabel}</strong><br>${baseHTML}</p>
   `;
 }
