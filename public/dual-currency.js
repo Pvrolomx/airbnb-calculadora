@@ -3,17 +3,30 @@ console.log('🔵 Dual Currency Script Loaded');
 // Dual Currency Logic
 let currentCurrency = 'USD';
 let fxRate = 20;
+let fxRateLoaded = false;
 
-// Fetch FX rate
+// Fetch FX rate con mejor logging
 async function loadFxRate() {
   try {
+    console.log('🔵 Fetching FX rate from Banxico...');
     const res = await fetch('/api/fx-usd');
     const data = await res.json();
     if (data.ok && data.rate) {
       fxRate = data.rate;
+      fxRateLoaded = true;
+      console.log(`✅ FX Rate loaded: ${fxRate} MXN/USD (${data.fecha})`);
+      // Actualizar indicador en UI si existe
+      const fxIndicator = document.getElementById('fx-rate-indicator');
+      if (fxIndicator) {
+        fxIndicator.textContent = `TC: $${fxRate.toFixed(2)}`;
+        fxIndicator.title = `Tipo de cambio Banxico: ${data.fecha}`;
+      }
+    } else {
+      console.warn('⚠️ FX API response not ok, using default:', fxRate);
     }
   } catch (err) {
-    console.error('Error loading FX rate:', err);
+    console.error('❌ Error loading FX rate:', err);
+    console.warn('⚠️ Using fallback rate:', fxRate);
   }
 }
 
@@ -66,19 +79,28 @@ function convertFormToMXN(formData) {
   return converted;
 }
 
+// Función para formatear montos en dual currency
+// Recibe monto en MXN (que es lo que devuelve el backend)
+// Muestra en la moneda seleccionada como principal
+function formatDualAmount(mxnAmount) {
+  const usdAmount = mxnAmount / fxRate;
+  const mxnFormatted = mxnAmount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  const usdFormatted = usdAmount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  
+  if (currentCurrency === 'USD') {
+    // Usuario eligió USD → Mostrar USD arriba, MXN abajo
+    return `<strong>$${usdFormatted} USD</strong><br><span style="color:#9ca3af;font-size:0.9em">≈ $${mxnFormatted} MXN</span>`;
+  } else {
+    // Usuario eligió MXN → Mostrar MXN arriba, USD abajo
+    return `<strong>$${mxnFormatted} MXN</strong><br><span style="color:#9ca3af;font-size:0.9em">≈ $${usdFormatted} USD</span>`;
+  }
+}
+
+// Mantener compatibilidad con función anterior
 async function formatDual(mxnAmount, elementId) {
   const element = document.getElementById(elementId);
   if (!element) return;
-  
-  const usdAmount = (mxnAmount / fxRate).toFixed(2);
-  const mxnFormatted = mxnAmount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-  const usdFormatted = parseFloat(usdAmount).toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-  
-  if (currentCurrency === 'USD') {
-    element.innerHTML = `<strong>$${usdFormatted} USD</strong><br><span style="color:#9ca3af;font-size:0.9em">≈ $${mxnFormatted} MXN</span>`;
-  } else {
-    element.innerHTML = `<strong>$${mxnFormatted} MXN</strong><br><span style="color:#9ca3af;font-size:0.9em">≈ $${usdFormatted} USD</span>`;
-  }
+  element.innerHTML = formatDualAmount(mxnAmount);
 }
 
 // Event listeners
